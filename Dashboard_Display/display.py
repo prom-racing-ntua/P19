@@ -19,16 +19,29 @@ if __name__ == '__main__':
 	class Telemetry_App(App):
 		sm = ScreenManager()
 		def build(self):
-			box = GridLayout(cols=3)
-			Window.clearcolor = (23/256,23/256,23/256,1)
-			col1 = FloatLayout()
-			self.c = Label(text= "Hello World")
-			box.add_widget(self.c)
+			Window.clearcolor = (85/256,23/256,23/256,1)
 			for i in range(4):
 				screen = Screen(name= 'Title %d' % i)
-				screen.add_widget(Label(text= 'Hello World %d' % i))
 				self.sm.add_widget(screen)
 
+				main=FloatLayout()
+				screen.add_widget(main)
+
+				main.add_widget(
+					Label(
+						text= 'I am screen No%d' % i,
+						font_size= '40sp',
+						pos_hint= {'x':0.4,'y':0.4},
+            			size_hint= (0.2,0.2)
+					)
+				)
+				main.add_widget(
+					Image(
+            		source= "Images/prom.png",
+            		pos_hint= {'x':0.1,'y':0.7},
+            		size_hint= (0.8,0.3)
+            		)
+            	)
 			Clock.schedule_interval(lambda *t: self.letsgo(), 1)
 			return self.sm
 		def letsgo(self):
