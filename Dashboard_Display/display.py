@@ -17,11 +17,12 @@ from kivy.uix.widget import Widget
 from screen1 import *
 if __name__ == '__main__':
 	i = 0
-	class Telemetry_App(App):
+	class DisplayApp(App):
 		changing = ScreenManager()
 		def build(self):
 			box= FloatLayout()
 			Window.clearcolor = (85/256,23/256,23/256,1)
+			# Window.fullscreen = True
 			for i in range(4):
 				screen = Screen(name= 'Title %d' % i)
 				self.changing.add_widget(screen)
@@ -60,6 +61,6 @@ if __name__ == '__main__':
 			i += 1
 			self.changing.current = 'Title %d'% (i%4)
 	try:
-		Telemetry_App().run()
+		DisplayApp().run()
 	except Exception as e:
 		raise e
