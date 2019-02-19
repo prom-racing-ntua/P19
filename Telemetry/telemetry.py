@@ -67,13 +67,11 @@ if __name__ == '__main__':
 					size_hint= (0.3,0.35)
 				)
 			)
-			main_window.add_widget(
-				TestWidget(
+			self.a=TestWidget(
 					value= "RPY",
 					pos_hint= {'x':0,'y':0.2},
 					size_hint= (0.3,0.25)
 				)
-			)
 			main_window.add_widget(
 				TestWidget(
 					value= "MAP",
@@ -81,11 +79,14 @@ if __name__ == '__main__':
 					size_hint= (0.3,0.2)
 				)
 			)
-			Clock.schedule_interval(lambda *t: self.get_data(), 1)
+			main_window.add_widget(self.a)
+			self.a.value = "dwhkhdwh"
+			Clock.schedule_interval(lambda *t: self.get_data(), 0.01)
 			return main_window
 		def get_data(self):
 			#received_data = ser.read()
 			self.i+=1
+			self.a.value="ela"+str(self.i)
 	try:
 		TelemetryApp().run()
 	except Exception as e:
