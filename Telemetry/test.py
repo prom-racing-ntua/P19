@@ -8,6 +8,10 @@ from kivy.uix.label import Label
 from kivy.graphics import Rectangle,Color
 from kivy.lang import Builder
 from hover import HoverBehavior
+
+from kivy.properties import BooleanProperty, ObjectProperty, NumericProperty
+
+
 Builder.load_string('''
 <TestWidget>:
     canvas:
@@ -26,6 +30,10 @@ Builder.load_string('''
 class TestWidget(Widget,HoverBehavior):
     value = StringProperty("TEST")
     size_text = StringProperty('20sp')
+    #variables representing all possible values' states
+    limit_value = int(200)
+    dangerous = BooleanProperty(False)
+    critical = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(TestWidget, self).__init__(**kwargs)
@@ -39,9 +47,24 @@ class TestWidget(Widget,HoverBehavior):
         self.bind(pos = self._shape)
         self.bind(size = self._shape)
         self.bind(value = self._val)
+        #if value -> dangerous we want widget background to be red
+        if self._is_dangerous:
+            self.bind(self._danger)
+
 
     def _shape(self, *args):
         self.message.center = (self.center_x, self.center_y)
 
     def _val(self, *args):
         self.message.text = self.value
+
+    #check and set darnegrous variable
+    #return it for the if statenment
+    def _is_dangerous(self, *args):
+        if int(self.limit_value) >= int (self.value):
+            self.dangerous = BooleanProperty(True)
+        return self.dangerous
+
+    #set the background color of the widget
+    def _danger(self, *args):
+        self.color = (1,0,0,1)

@@ -12,7 +12,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Line,Color
 from kivy.uix.image import Image
-from kivy.garden.graph import Graph, LinePlot,MeshLinePlot
+from kivy.garden.graph import Graph, LinePlot, MeshLinePlot
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.core.window import Window
@@ -21,6 +21,7 @@ from datetime import datetime
 import serial,time,math,random,queue
 
 from test import TestWidget
+
 
 def convert(clat,clon):    ##convert gps coords
 	# 3804.1712,02348.9058
@@ -35,7 +36,7 @@ if __name__ == '__main__':
 		i = 0
 		def build(self):
 			Window.clearcolor = (85/256,23/256,23/256,1)
-			Window.fullscreen = True
+			Window.fullscreen = False
 			main_window = FloatLayout()
 			main_window.add_widget(
 				Image(
@@ -71,6 +72,7 @@ if __name__ == '__main__':
 					value= "RPY",
 					pos_hint= {'x':0,'y':0.2},
 					size_hint= (0.3,0.25)
+
 				)
 			main_window.add_widget(
 				TestWidget(
@@ -86,7 +88,10 @@ if __name__ == '__main__':
 		def get_data(self):
 			#received_data = ser.read()
 			self.i+=1
-			self.a.value="ela"+str(self.i)
+			self.a.value=str(self.i)
+			#we set the limit_value so we can check if its dangerous
+			self.limit_value = int(200)
+			#self.a.is_dangerous()
 	try:
 		TelemetryApp().run()
 	except Exception as e:
