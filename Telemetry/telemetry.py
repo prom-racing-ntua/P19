@@ -56,33 +56,33 @@ if __name__ == '__main__':
 			)
 			main_window.add_widget(
 				TestWidget(
-					value= "TireTemp",
+					value= 20,
 					pos_hint= {'x':0,'y':0.8},
 					size_hint= (0.3,0.2)
 				)
 			)
 			main_window.add_widget(
 				TestWidget(
-					value= "SHOCK",
+					value= 201,
 					pos_hint= {'x':0,'y':0.45},
 					size_hint= (0.3,0.35)
 				)
 			)
 			self.a=TestWidget(
-					value= "RPY",
+					value= 27,
 					pos_hint= {'x':0,'y':0.2},
 					size_hint= (0.3,0.25)
 
 				)
 			main_window.add_widget(
 				TestWidget(
-					value= "MAP",
+					value= 20,
 					pos_hint= {'x':0,'y':0},
 					size_hint= (0.3,0.2)
 				)
 			)
 			main_window.add_widget(self.a)
-			self.a.value = "dwhkhdwh"
+			# self.a.value = "dwhkhdwh"
 			Clock.schedule_interval(lambda *t: self.get_data(), 0.01)
 			return main_window
 		def get_data(self):
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 			self.i+=1
 			self.a.value=str(self.i)
 			#we set the limit_value so we can check if its dangerous
-			self.limit_value = int(200)
+			self.a.limit_value = 200
 			#self.a.is_dangerous()
 	try:
 		TelemetryApp().run()
