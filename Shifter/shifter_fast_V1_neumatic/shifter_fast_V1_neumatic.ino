@@ -25,7 +25,6 @@
 #define shift_t 100 //milliseconds to keep valve ON on a full shift          //NEEDS FIX becase of motor instead of neumatic valve
 #define clutch_t 100 ///wait the servo!
 
-#define auto_shift_up 1
 #define sparkcut  2 //Gearcut pin at ECU                                     //FIX PIN because of can shield potential overlap
 #define shift_down 3
 #define shift_up 4
@@ -35,11 +34,9 @@
 #define total_gears 5
 
 unsigned long up_DebounceTime=0, down_DebounceTime=0;
-int gear=0, current_gear_pot=0;
-uint16_t pot_pos, clutch_pos, prev_pot_pos=0;
+int gear=0, current_gear_pot=0;                                  //current gear pot na figei
+uint16_t pot_pos, clutch_pos;
 uint8_t shift_up_unpressed, shift_down_unpressed;
-unsigned long int prev_time;
-//uint8_t gearbox[total_gears+1] = {43,0,143,400,680,920};                   //den xreiazetai
 
 //CANBUS variables
 int launch=0, autoshift=0, neutral=0, rpm=0, tps=0
@@ -80,34 +77,14 @@ void setup() {
  
   clutch.attach(clutch_pin, 1000, 1600);  //1000->1600ms = 0->60 degrees      FIX
   clutch.writeMicroseconds(1000); //initialize servo's position               FIX
-
+}
 
 void loop() {
-/*  current_gear_pot=analogRead(A1);                                            //FIX VALUES
-  if(current_gear_pot<15) {                                                     //analogiko diavasma gear pou den tha xreiastei!!
-    gear=0;
-  }
-  else if(current_gear_pot<80) {
-    gear=1;
-  }
-  else if(current_gear_pot<270) {  ;
-    gear=2;
-  }
-  else if(current_gear_pot<550) {
-    gear=3;
-  }
-  else if(current_gear_pot<800) {
-    gear=4;
-  }
-  else {
-    gear=5;
-  }  
-  */
   
   pot_pos = analogRead(A0);
   //check if the clutch is pressed
   if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
-     clutch.writeMicroseconds(1480);
+     clutch.writeMicroseconds(1480);                 //why?
      if (millis() > up_DebounceTime) { // Debouncing Technique
       if(digitalRead(shift_up)==LOW || (autoshift==1 && rpm>n2[gear])) shift_up_unpressed=true;   //up shift
       else{
@@ -124,10 +101,10 @@ void loop() {
               PORTD &= ~(1<<5);
                            
            }
-           else gear=5;
-             up_DebounceTime = millis();
-             up_DebounceTime += debounceDelay;
-             shift_up_unpressed=false; 
+           else {gear=5;}
+           up_DebounceTime = millis();
+           up_DebounceTime += debounceDelay;
+           shift_up_unpressed=false; 
         }
       }
    }
@@ -143,8 +120,9 @@ void loop() {
              delay(clutch_t);
              PORTD |= (1<<6);
              delay(shift_t);
-             clutch.writeMicroseconds(1480);             // giati anapoda????????????????????????
-             PORTD &= ~(1<<6);      
+             PORTD &= ~(1<<6);
+             clutch.writeMicroseconds(1480);
+                   
           }
           else gear=0;
           down_DebounceTime = millis();
@@ -204,13 +182,7 @@ void loop() {
      }
    }
    if(launch==1) {
-      clutch.writeMicroseconds(1200);                              //shift up to be ready for the lsunch
-      delay(clutch_t);                                             //tha xreiastei na bei deutera??
-      PORTD |= (1<<5);
-      delay(shift_t);
-      PORTD &= ~(1<<5);
-      clutch.writeMicroseconds(clutch_pos);
-      pot_pos = analogRead(A0);
+      pot_pos = analogRead(A0);  //mallon oxi
       //LAUNCH SEQUENCE
       while(1){                    
             if(pot_pos<(pot_clutch_MIN-pot_error) { //clutch not presed but launch button is still presed
@@ -241,7 +213,7 @@ void loop() {
       delay(shift_t);                                             //ISOS THELEI MEGALITERO DELAY
       PORTD &= ~(1<<6); 
       }
-      clutch.writeMicroseconds(1480);
+      clutch.writeMicroseconds(clutch_pos);
       gear=0;
       neutral=0;
    }
