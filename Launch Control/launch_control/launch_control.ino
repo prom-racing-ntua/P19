@@ -21,6 +21,7 @@ void setup(){
   float c2=J_w/R(R^2*c_s/J_w+(1+d_sr[--])*c_s/m);
 }
 
+
 void loop(){
   omegr_r=analogRead(--);
   omegr_l=analogRead(--);
