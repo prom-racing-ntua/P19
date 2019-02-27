@@ -8,6 +8,9 @@
 //canbus den ksero an einai sosto to data aquisition kai to ti morfi mas dinei i ecu
 //peirama gia to launch sequence!!
 
+// if (PINB & 0b00000001)    count++;                  // if(digitalRead(encodPinB1)==HIGH)   count_r ++;
+// else                      count--;                  // if (digitalRead(encodPinB1)==LOW)   count_r --;
+
 
 #include <SPI.h>
 #include "mcp_can.h"
@@ -23,7 +26,7 @@
 #define clutch_t 100 ///wait the servo!
 
 #define auto_shift_up 1
-#define sparkcut  2 //Gearcut pin at ECU                                     //FIX PIN because of can shield
+#define sparkcut  2 //Gearcut pin at ECU                                     //FIX PIN because of can shield potential overlap
 #define shift_down 3
 #define shift_up 4
 #define port1 5  //moves lever up (upshift)
@@ -80,8 +83,8 @@ void setup() {
 
 
 void loop() {
-  current_gear_pot=analogRead(A1);                                            //FIX VALUES
-  if(current_gear_pot<15) {
+/*  current_gear_pot=analogRead(A1);                                            //FIX VALUES
+  if(current_gear_pot<15) {                                                     //analogiko diavasma gear pou den tha xreiastei!!
     gear=0;
   }
   else if(current_gear_pot<80) {
@@ -99,6 +102,8 @@ void loop() {
   else {
     gear=5;
   }  
+  */
+  
   pot_pos = analogRead(A0);
   //check if the clutch is pressed
   if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
