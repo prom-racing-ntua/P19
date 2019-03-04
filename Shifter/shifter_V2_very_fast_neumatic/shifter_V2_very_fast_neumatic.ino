@@ -7,14 +7,11 @@
 //canbus den ksero an einai sosto to data aquisition kai to ti morfi mas dinei i ecu
 //peirama gia to launch sequence!!
 
-// if (PINB & 0b00000001)    count++;                  // if(digitalRead(encodPinB1)==HIGH)   count_r ++;
-// else                      count--;                  // if (digitalRead(encodPinB1)==LOW)   count_r --;
-
 
 #include <SPI.h>
 #include "mcp_can.h"
 #include <Servo.h> 
-
+//PROSOXI!!!!!!!!!!!! OTAN ALLAZOUN TA PINS PREPEI NA ALLAZOUN KAI TA ANTISTOIXA PORT, DDR PIN
 #define pot_clutch_MIN 206   
 #define pot_clutch_MAX 390
 #define pot_error 15
@@ -32,12 +29,11 @@
 #define clutch_pin 7  //servo pin
 #define total_gears 5
 
-unsigned long up_DebounceTime=0, down_DebounceTime=0;
+unsigned long current, previous, interval, up_DebounceTime=0, down_DebounceTime=0;
 uint16_t pot_pos, clutch_pos;
-uint8_t shift_up_unpressed, shift_down_unpressed;
-
+uint8_t shift_flag=1;
 //CANBUS variables
-int launch=0, autoshift=0, neutral=0, rpm=0, tps=0;
+uint8_t launch=0, autoshift=0, neutral=0, rpm=0, tps=0;
 unsigned char len = 0;
 unsigned char buf[8];
 
@@ -46,10 +42,10 @@ int n2[total_gears]={9500, 9500, 9500, 9500, 9999999};
 int n_accel[total_gears]={0, 2500, 3000, 3500, 4800};
 int n_brake[total_gears]={0, 3000, 3600, 4500, 5600};
 int tps_min=5, tps_max=90; //pososto petaloudas !!!                             prosoxi prepei na doume se ti morfi to dinei i ecu!!!
-int gear=0;
+uint8_t gear=0;
 
 //launch control variables
-int launch_cancel=0;
+uint8_t launch_cancel=0;
 
 const int SPI_CS_PIN = 10;                                                      //FIX
 MCP_CAN CAN(SPI_CS_PIN);
@@ -75,19 +71,19 @@ void setup() {
  
   clutch.attach(clutch_pin, 1000, 1600);  //1000->1600ms = 0->60 degrees      FIX
   clutch.writeMicroseconds(1000); //initialize servo's position               FIX
+ 
+  interval=30;       //miliseconds
 }
 
 void loop() {
-  
+  current=millis();
   pot_pos = analogRead(A0);
+  
   //check if the clutch is pressed
   if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
-     clutch.writeMicroseconds(1480);                 //why?
-     if (millis() > up_DebounceTime) { // Debouncing Technique
-      if(digitalRead(shift_up)==LOW || (autoshift==1 && rpm>n2[gear])) shift_up_unpressed=true;   //up shift
-      else{
-        delay(debounceDelay);
-        if(shift_up_unpressed==true && (digitalRead(shift_up)==HIGH || (autoshift==1 && rpm>=n2[gear]))){      
+     clutch.writeMicroseconds(1480);                                     //why?
+     
+     if((!(PIND & 0b00010000) || (autoshift==1 && rpm>n2[gear])) && shift_flag==1) { //up shift
            gear++;
            if(gear <= total_gears)  {    //check if we passed the total number of gears
               PORTD |= (1<<5);
@@ -97,21 +93,13 @@ void loop() {
               PORTD &= ~(1<<2);
               delay(50);
               PORTD &= ~(1<<5);
-                           
            }
            else {gear=5;}
-           up_DebounceTime = millis();
-           up_DebounceTime += debounceDelay;
-           shift_up_unpressed=false; 
-        }
+           shift_flag=0;
+           previous=current;
+           previous +=interval;
       }
-   }
-  
-  if (millis() > down_DebounceTime) { // Debouncing Technique
-     if(digitalRead(shift_down)==LOW || autoshift==1) shift_down_unpressed=true;
-     else{
-        delay(debounceDelay);
-        if(shift_down_unpressed==true && (digitalRead(shift_down)==HIGH || ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear]))))){
+      if((!(PIND & 0b00001000) || ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear])))) && shift_flag==1){
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
@@ -122,13 +110,11 @@ void loop() {
              clutch.writeMicroseconds(1480);
                    
           }
-          else gear=0;
-          down_DebounceTime = millis();
-          down_DebounceTime += debounceDelay;
-          shift_down_unpressed=false; 
+          else {gear=0;}
+          shift_flag=0;
+          previous=current;
+          previous +=interval;
         }
-      }
-    }
   }
   else if(pot_pos>pot_clutch_MIN && pot_pos<pot_clutch_MAX){ //the clutch is pressed
 
@@ -136,50 +122,37 @@ void loop() {
     clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 1480, 1200);
     clutch.writeMicroseconds(clutch_pos);
     
-    if (millis() > up_DebounceTime) { // Debouncing Technique
-      if(digitalRead(shift_up)==LOW) shift_up_unpressed=true; 
-          else{
-            delay(debounceDelay);
-            if(shift_up_unpressed==true && digitalRead(shift_up)==HIGH){      
-              gear++;
-              if(gear <= total_gears)  {
-                 clutch.writeMicroseconds(1200);
-                 delay(clutch_t);
-                 PORTD |= (1<<5);
-                 delay(shift_t);
-                 PORTD &= ~(1<<5);
-                 clutch.writeMicroseconds(clutch_pos);
-               }
-               else{gear=5;}
-               up_DebounceTime = millis();
-               up_DebounceTime += debounceDelay;
-               shift_up_unpressed=false; 
-             }
-          }
-      }
-        
-    if (millis() > down_DebounceTime) { // Debouncing Technique
-      if(digitalRead(shift_down)==LOW) shift_down_unpressed=true;
-      else{
-        delay(debounceDelay);
-        if(shift_down_unpressed==true && digitalRead(shift_down)==HIGH){        
-          gear--;
-          if(gear>=1) {
-                 clutch.writeMicroseconds(1200);
-                 delay(clutch_t);
-                 PORTD |= (1<<6);
-                 delay(shift_t);
-                 PORTD &= ~(1<<6);
-                 clutch.writeMicroseconds(clutch_pos);
-         }
-         else{gear=0;}
-         down_DebounceTime = millis();
-         down_DebounceTime +=debounceDelay;
-         shift_down_unpressed=false;
-       }
-     }
-   }
-   if(launch==1) {
+    if((!(PIND & 0b00010000)) && shift_flag==1){      
+        gear++;
+        if(gear <= total_gears)  {
+            clutch.writeMicroseconds(1200);
+            delay(clutch_t);
+            PORTD |= (1<<5);
+            delay(shift_t);
+            PORTD &= ~(1<<5);
+            clutch.writeMicroseconds(clutch_pos);
+        }
+        else{gear=5;}
+        shift_flag=0;
+        previous=current;
+        previous +=interval;
+    }
+    if(!(PIND & 0b00001000) && shift_flag==1){        
+        gear--;
+        if(gear>=1) {
+           clutch.writeMicroseconds(1200);
+           delay(clutch_t);
+           PORTD |= (1<<6);
+           delay(shift_t);
+           PORTD &= ~(1<<6);
+           clutch.writeMicroseconds(clutch_pos);
+        }
+        else{gear=0;}
+        shift_flag=0;
+        previous=current;
+        previous +=interval;
+    }
+    if(launch==1) {
       pot_pos = analogRead(A0);  //mallon oxi
       //LAUNCH SEQUENCE
       while(1){                    
@@ -215,6 +188,11 @@ void loop() {
       gear=0;
       neutral=0;
    }
+  }
+  if(current>previous){   //Debouncing method
+    if((PIND & 0b00010000) && (PIND & 0b00001000)){  //if(digitalRead(shift_up)==HIGH  && digitalRead(shift_down)==HIGH) //means we have released both shifting pads
+       shift_flag=1;
+    }
   }
 }
 
