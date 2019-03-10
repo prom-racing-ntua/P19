@@ -1,0 +1,17 @@
+E:\PROM\InProgress\livechartstest1\livechartstest1\obj\Debug\livechartstest1.Form1.resources
+E:\PROM\InProgress\livechartstest1\livechartstest1\obj\Debug\livechartstest1.Properties.Resources.resources
+E:\PROM\InProgress\livechartstest1\livechartstest1\obj\Debug\livechartstest1.csproj.GenerateResource.Cache
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\livechartstest1.exe.config
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\livechartstest1.exe
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\livechartstest1.pdb
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.dll
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.WinForms.dll
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.Wpf.dll
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.pdb
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.xml
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.WinForms.pdb
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.WinForms.xml
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.Wpf.pdb
+E:\PROM\InProgress\livechartstest1\livechartstest1\bin\Debug\LiveCharts.Wpf.xml
+E:\PROM\InProgress\livechartstest1\livechartstest1\obj\Debug\livechartstest1.exe
+E:\PROM\InProgress\livechartstest1\livechartstest1\obj\Debug\livechartstest1.pdb
