@@ -1,0 +1,28 @@
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\bin\Debug\winformsbase.exe.config
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\bin\Debug\winformsbase.exe
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\bin\Debug\winformsbase.pdb
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\obj\Debug\winformsbase.csprojResolveAssemblyReference.cache
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\obj\Debug\winformsbase.Form1.resources
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\obj\Debug\winformsbase.Properties.Resources.resources
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\obj\Debug\winformsbase.csproj.GenerateResource.Cache
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\obj\Debug\winformsbase.exe
+C:\Users\Γρηγορης Κ\Source\Repos\P19\winformsbase\winformsbase\obj\Debug\winformsbase.pdb
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\winformsbase.exe.config
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\winformsbase.exe
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\winformsbase.pdb
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\AGauge.dll
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.dll
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.WinForms.dll
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.Wpf.dll
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.pdb
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.xml
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.WinForms.pdb
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.WinForms.xml
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.Wpf.pdb
+E:\PROM\InProgress\winformsbase\winformsbase\bin\Debug\LiveCharts.Wpf.xml
+E:\PROM\InProgress\winformsbase\winformsbase\obj\Debug\winformsbase.Form1.resources
+E:\PROM\InProgress\winformsbase\winformsbase\obj\Debug\winformsbase.Properties.Resources.resources
+E:\PROM\InProgress\winformsbase\winformsbase\obj\Debug\winformsbase.csproj.GenerateResource.Cache
+E:\PROM\InProgress\winformsbase\winformsbase\obj\Debug\winformsbase.exe
+E:\PROM\InProgress\winformsbase\winformsbase\obj\Debug\winformsbase.pdb
+E:\PROM\InProgress\winformsbase\winformsbase\obj\Debug\winformsbase.csprojResolveAssemblyReference.cache
