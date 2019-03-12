@@ -59,7 +59,7 @@ void setup() {
   Serial.begin(115200);
   CAN.begin(CAN_1000KBPS);                                                      //1Mbps
   DDRD  = DDRD | B01100100;   //1->output, 0->input  TO OR einai gia na apofigo tin allagi ton 0, 1 pou einai tx, rx
-  PORTD =        B00011000;   //for pullup(sets these bit HIGH)
+  PORTD =        B00011000;   //for pullup(sets these bit HIGH)  check arduino site for pins(mega, uno, nano have different pins)
   
   attachInterrupt(0, canReads, FALLING); // start interrupt                    !!porsoxi borei na thelei allagi to 0!!
   
