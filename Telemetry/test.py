@@ -35,8 +35,8 @@ Builder.load_string('''
         size: orig.size
     Image:
         source: "Images/NTUA.png"
-        pos: 0,0
-        size: 200,200
+        pos: orig.x,orig.y
+        size: 100,100
 ''')
 
 class TestWidget(Widget,HoverBehavior):
