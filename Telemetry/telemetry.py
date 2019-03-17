@@ -24,8 +24,9 @@ from collections import deque
 
 
 from test import TestWidget
-from graph_widgets import *
-
+from center import *
+from left import *
+from right import *
 def convert(clat,clon):    ##convert gps coords
 	# 3804.1712,02348.9058
 	lat=int(clat[0:2])+round(float(clat[2:9])/60,6)
@@ -36,42 +37,40 @@ def convert(clat,clon):    ##convert gps coords
 if __name__ == '__main__':
 	# ser = serial.Serial('COM3',115200)   ##(for windows)
 	# ser = serial.Serial('/dev/ttyACM0',115200)  ##(for linux)
-	ax_list=deque(maxlen=300)
-	ay_list=deque(maxlen=300)
-	brake=deque(maxlen=300)
-	tps=deque(maxlen=300)
-
 	class TelemetryApp(App):
 		i = 0
 		def build(self):
 			Window.clearcolor = (0,0,0,1)
 			Window.fullscreen = False
+			main_window=FloatLayout()
 			Clock.schedule_interval(lambda *t: self.get_data(), 0.016)
-			main_window.add_widget(
-					TestWidget(
-						value=30,
-						pos_hint={'x':0,'y':0.8},
-						size_hint=(0.3,0.2)
-					))
-			main_window.add_widget(
-					TestWidget(
-						value=30,
-						pos_hint={'x':0,'y':0.5},
-						size_hint=(0.3,0.3)
-					))
+			main_window.add_widget(left_column)
+			main_window.add_widget(center_column)
 			return main_window
 		def get_data(self):
-			ax_list.append((self.i,math.sin(2*math.pi*self.i)))
-			ay_list.append((self.i,math.sin(2*math.pi*self.i)))
-			brake.append((self.i,23+10*math.sin(2*math.pi*self.i)))
-			tps.append((self.i,44-10*math.sin(2*math.pi*self.i)))
+			accel_x.points_list_t[0].append((self.i,math.sin(math.pi*self.i)))
+			accel_y.points_list_t[0].append((self.i,math.sin(2*math.pi*self.i)/2))
+			brake_tps_steering.points_list_t[0].append((self.i,math.sin(2*math.pi*self.i)))
+			brake_tps_steering.points_list_t[1].append((self.i,2*math.sin(2*math.pi*self.i)))
+			brake_tps_steering.points_list_t[2].append((self.i,20*math.sin(2*math.pi*self.i)))
 
-			ax_plot.points=ax_list
-			ay_plot.points=ay_list
-			brake_plot.points=brake
-			tps_plot.points=tps
-			brake_tps_steering.xmax = gear_rpm_speed.xmax = accel_x.xmax = accel_y.xmax = self.i
-			brake_tps_steering.xmin = gear_rpm_speed.xmin = accel_x.xmin = accel_y.xmin = self.i-4
+			gear_rpm_speed.points_list_t[0].append((self.i,int(abs(5*math.sin(math.pi*self.i)))))
+			gear_rpm_speed.points_list_t[1].append((self.i,math.sin(math.pi*self.i)))
+			gear_rpm_speed.points_list_t[2].append((self.i,2*math.sin(math.pi*self.i)))
+
+			roll_pitch.points_list_t[0].append((self.i,0.5*math.sin(math.pi*self.i)))
+			roll_pitch.points_list_t[1].append((self.i,math.sin(math.pi*self.i)))
+			roll_pitch.points_list_t[2].append((self.i,math.sin(2*math.pi*self.i)))
+
+			shock_travel.points_list_t[0].append((self.i,12*math.sin(math.pi*self.i)))
+			shock_travel.points_list_t[1].append((self.i,12+4*math.sin(math.pi*self.i)))
+			shock_travel.points_list_t[2].append((self.i,20*math.sin(math.pi*self.i)))
+			shock_travel.points_list_t[3].append((self.i,40*math.sin(math.pi*self.i)))
+
+
+			accel_x.change = accel_y.change = brake_tps_steering.change = gear_rpm_speed.change = roll_pitch.change = shock_travel.change = True
+			accel_x.xmin = accel_y.xmin =gear_rpm_speed.xmin = brake_tps_steering.xmin = roll_pitch.xmin = shock_travel.xmin = self.i-4
+			accel_x.xmax = accel_y.xmax =gear_rpm_speed.xmax = brake_tps_steering.xmax = roll_pitch.xmax = shock_travel.xmax = self.i
 			self.i+=0.016
 	try:
 		TelemetryApp().run()

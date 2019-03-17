@@ -1,12 +1,16 @@
 from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.relativelayout import RelativeLayout
+
 from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
+from promGraph import PromGraph
 
 
-
-main_window = FloatLayout()
-accel_x = Graph(
+center_column = FloatLayout()
+accel_x = PromGraph(
+				ylabs=["AX: %.2f"],
+				num_of_plots=1,
 				xlabel='',
 				ylabel='',
 				precisionx='%.2f',
@@ -25,9 +29,11 @@ accel_x = Graph(
 				pos_hint={'x':0.3,'y':0},
 				size_hint=(0.4,0.23)
 				)
-main_window.add_widget(accel_x)
+center_column.add_widget(accel_x)
 
-accel_y = Graph(
+accel_y = PromGraph(
+				ylabs=["AY: %.2f"],
+				num_of_plots=1,
 				xlabel='',
 				ylabel='',
 				precisionx='%.2f',
@@ -46,13 +52,13 @@ accel_y = Graph(
 				pos_hint={'x':0.3,'y':0.21},
 				size_hint=(0.4,0.23)
 				)
-main_window.add_widget(accel_y)
+center_column.add_widget(accel_y)
 
-gear_rpm_speed = Graph(
+gear_rpm_speed = PromGraph(
+				ylabs=["GEAR: %.2f","RPM: %.2f","SPD: %.2f"],
+				num_of_plots=3,
 				xlabel='',
 				ylabel='',
-				ylabel1='RPM',
-				ylabel2='SPEED',
 				precisionx='%.2f',
 				x_ticks_minor=2,
 				x_ticks_major=1,
@@ -73,13 +79,13 @@ gear_rpm_speed = Graph(
 				pos_hint={'x':0.3,'y':0.42},
 				size_hint=(0.4,0.23)
 				)
-main_window.add_widget(gear_rpm_speed)
+center_column.add_widget(gear_rpm_speed)
 
-brake_tps_steering = Graph(
+brake_tps_steering = PromGraph(
+				ylabs=["BRAKE: %.2f","TPS: %.2f","STEER: %.2f"],
+				num_of_plots=3,
 				xlabel='',
 				ylabel='',
-				ylabel1='RPM',
-				ylabel2='SPEED',
 				precisionx='%.2f',
 				x_ticks_minor=2,
 				x_ticks_major=1,
@@ -96,30 +102,6 @@ brake_tps_steering = Graph(
 				pos_hint={'x':0.3,'y':0.63},
 				size_hint=(0.4,0.23)
 				)
-main_window.add_widget(brake_tps_steering)
+center_column.add_widget(brake_tps_steering)
 
-
-ax_plot = LinePlot(line_width=2, color=[1, 0, 0, 1])
-ay_plot = LinePlot(line_width=2, color=[1, 0, 0, 1])
-gear_plot = LinePlot(line_width=2, color=[0, 0, 1, 1])
-rpm_plot = LinePlot(line_width=2, color=[0, 0, 1, 1])
-speed_plot = LinePlot(line_width=2, color=[0, 0, 1, 1])
-tps_plot = LinePlot(line_width=2, color=[0, 0, 1, 1])
-brake_plot = LinePlot(line_width=2, color=[0, 0, 1, 1])
-steering_plot = LinePlot(line_width=2, color=[0, 0, 1, 1])
-
-
-accel_x.add_plot(ax_plot)
-accel_y.add_plot(ay_plot)
-gear_rpm_speed.add_plot(speed_plot)
-gear_rpm_speed.add_plot(rpm_plot)
-gear_rpm_speed.add_plot(gear_plot)
-brake_tps_steering.add_plot(brake_plot)
-brake_tps_steering.add_plot(tps_plot)
-brake_tps_steering.add_plot(steering_plot)
-
-
-
-brake_tps_steering.xmax = gear_rpm_speed.xmax = accel_x.xmax = accel_y.xmax = 5
-brake_tps_steering.xmin = gear_rpm_speed.xmin = accel_x.xmin = accel_y.xmin = 0
 

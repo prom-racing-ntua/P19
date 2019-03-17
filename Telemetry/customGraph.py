@@ -14,7 +14,7 @@ from kivy.logger import Logger
 from kivy import metrics
 from math import log10, floor, ceil
 from decimal import Decimal
-from hover import HoverBehavior
+
 
 try:
     import numpy as np
@@ -59,7 +59,7 @@ class YAxis(Axis):
     pass
 
 
-class Graph(Widget,HoverBehavior):
+class Graph(Widget):
     '''Graph class, see module documentation for more information.
     '''
 
