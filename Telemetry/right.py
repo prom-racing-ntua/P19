@@ -5,3 +5,26 @@ from kivy.uix.relativelayout import RelativeLayout
 from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
+from sectors import *
+
+
+right_column = FloatLayout()
+
+sector1 = Sectors(
+    sectorname = 'Sector 1'
+    customcolor = (0.35,0.35,0.35,1)
+
+)
+right_column.add_widget(sector1)
+
+sector2 = Sectors (
+    sectorname = 'Sector 2'
+    customcolor = (0.55,0.35,0.35,1)
+)
+right_column.add_widget(sector2)
+
+sector3 = Sectors(
+    sectorname = 'Sector 3'
+    customcolor = (0.35 , 0.55 , 0.35 , 1)
+)
+right_column.add_widget(sector3)
