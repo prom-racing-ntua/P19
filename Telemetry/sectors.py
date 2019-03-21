@@ -10,13 +10,14 @@ from kivy.graphics import Rectangle,Color
 from kivy.lang import Builder
 from sectorLabel import SectorLabel
 
-Builder.load_string('''
-<Sectors>:
-    canvas:
-        Color:
-            rgba: self.customcolor
 
-''')
+# Builder.load_string('''
+# <Sectors>:
+#     canvas:
+#         Color:
+#             rgba: self.customcolor
+#
+# ''')
 
 
 
@@ -33,10 +34,10 @@ class Sectors(Widget):
     def __init__(self, **kwargs):
         super(Sectors, self).__init__(**kwargs)
         ## Create the labels
-        self.sectorlabel = SectorLabel(text = self.sectorname ,bgclr=[1,1,1,1], color = [0,1,1,1] , font_size = '22sp')
-        self.bestlabel = SectorLabel(text = self.best ,bgclr=[1,1,1,1], color = [0,1,0,1] , font_size = '22sp')
-        self.previouslabel = SectorLabel(text = self.previousbest ,bgclr=[1,1,1,1], color = [1,0,0,1] , font_size = '22sp')
-        self.currentlabel = SectorLabel(text = self.currenttime ,bgclr=[1,1,1,1], color = [0,0,1,1] , font_size = '22sp')
+        self.sectorlabel = SectorLabel(text = self.sectorname ,lineclr=[1,1,1,1], color = [0,1,1,1] , font_size = '18sp')
+        self.bestlabel = SectorLabel(text = self.best ,lineclr=[1,1,1,1], color = [0,1,0,1] , font_size = '18sp')
+        self.previouslabel = SectorLabel(text = self.previousbest ,lineclr=[1,1,1,1], color = [1,0,0,1] , font_size = '18sp')
+        self.currentlabel = SectorLabel(text = self.currenttime ,lineclr=[1,1,1,1], color = [0,0,1,1] , font_size = '18sp')
         self.add_widget(self.sectorlabel)
         self.add_widget(self.currentlabel)
         self.add_widget(self.previouslabel)
