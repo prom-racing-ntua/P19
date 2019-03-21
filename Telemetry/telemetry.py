@@ -89,8 +89,6 @@ if __name__ == '__main__':
 			shock_travel.points_list_m[3].append((self.i,1.5*40*math.sin(math.pi*self.i)))
 
 			accel_x.change = accel_y.change = brake_tps_steering.change = gear_rpm_speed.change = roll_pitch.change = shock_travel.change = True
-			accel_x.xmin = accel_y.xmin =gear_rpm_speed.xmin = brake_tps_steering.xmin = roll_pitch.xmin = shock_travel.xmin = self.i-4
-			accel_x.xmax = accel_y.xmax =gear_rpm_speed.xmax = brake_tps_steering.xmax = roll_pitch.xmax = shock_travel.xmax = self.i
 			self.i+=0.016
 
 			##create each sector
