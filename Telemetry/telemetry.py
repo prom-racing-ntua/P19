@@ -24,6 +24,7 @@ from collections import deque
 
 
 from test import TestWidget
+from sectors import Sectors
 from center import *
 from left import *
 from right import *
@@ -90,6 +91,10 @@ if __name__ == '__main__':
 			accel_x.xmin = accel_y.xmin =gear_rpm_speed.xmin = brake_tps_steering.xmin = roll_pitch.xmin = shock_travel.xmin = self.i-4
 			accel_x.xmax = accel_y.xmax =gear_rpm_speed.xmax = brake_tps_steering.xmax = roll_pitch.xmax = shock_travel.xmax = self.i
 			self.i+=0.016
+
+			##create each sector
+			sector1.currenttime = str(self.i)
+			sector2.currenttime = str(self.i/2)
 	try:
 		TelemetryApp().run()
 	except Exception as e:

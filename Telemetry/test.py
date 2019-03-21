@@ -10,7 +10,7 @@ from kivy.lang import Builder
 from kivy.uix.image import Image
 from hover import HoverBehavior
 
-from kivy.properties import BooleanProperty, ObjectProperty, NumericProperty,ListProperty
+from kivy.properties import BooleanProperty, ObjectProperty, NumericProperty, ListProperty
 
 
 Builder.load_string('''
