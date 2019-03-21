@@ -29,8 +29,8 @@ Builder.load_string('''
 ''')
 
 class SectorLabel(Label,Widget):
-    #lineclr = ListProperty([1,1,1,0.1])
-    #bgclr = ListProperty([1,1,1,0.1])
+    lineclr = ListProperty([])
+    bgclr = ListProperty([])
     def __init__(self,bgclr=None,lineclr=None,**kwargs):
         self.lineclr = lineclr if lineclr is not None  else [1,0,0,0.1]
         self.bgclr = bgclr if bgclr is not None else [1,1,1,0]
