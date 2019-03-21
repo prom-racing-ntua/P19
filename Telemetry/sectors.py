@@ -8,15 +8,16 @@ from kivy.core.window import Window
 from kivy.properties import NumericProperty,StringProperty, ListProperty
 from kivy.graphics import Rectangle,Color
 from kivy.lang import Builder
+from sectorLabel import SectorLabel
 
 Builder.load_string('''
 <Sectors>:
     canvas:
-        color:
-            rgba : self.customcolor
-        Rectangle:
-            pos: self.center_x-self.size[0]/2, self.center_y-self.size[1]/2
-            size: self.size[0]*0.98,self.size[1]
+        Color:
+            rgba: self.customcolor
+        Line:
+            rectangle: self.x,self.y,self.width,self.height
+            width: 1
 ''')
 
 
@@ -29,42 +30,45 @@ class Sectors(Widget):
     best = StringProperty("00:00")
     previousbest = StringProperty("")
     currenttime = StringProperty("")
-    customcolor = ListProperty()
+    customcolor = ListProperty([])
+
+    def __init__(self, **kwargs):
+        super(Sectors, self).__init__(**kwargs)
+        ## Create the labels
+        self.sectorlabel = SectorLabel(text = " " ,bgclr=[1,1,1,1], color = [0,1,1,1] , font_size = '22sp')
+        self.bestlabel = SectorLabel(text = "00:00" ,bgclr=[1,1,1,1], color = [0,1,0,1] , font_size = '22sp')
+        self.previouslabel = SectorLabel(text = "00:00" ,bgclr=[1,1,1,1], color = [1,0,0,1] , font_size = '22sp')
+        self.currentlabel = SectorLabel(text = "00:00" ,bgclr=[1,1,1,1], color = [0,0,1,1] , font_size = '22sp')
+        self.add_widget(self.sectorlabel)
+        self.add_widget(self.currentlabel)
+        self.add_widget(self.previouslabel)
+        self.add_widget(self.bestlabel)
 
 
-def __init__(self, **kwargs):
-    super(Sectors, self).__init__(**kwargs)
-    ## Create the labels
-    self.sectorlabel = Label (text = "" , color = (0,1,1,1) , font_size = '10sp')
-    self.bestlabel = Label(text = "00:00" , color = (0,1,0,1) , font_size = '10sp')
-    self.previouslabel = Label(text = "00:00" , color = (1,0,0,1) , font_size = '10sp')
-    self.currentlabel = Label (text = "00:00" , color = (0,0,1,1) , font_size = '10sp')
-    self.add_widget(sectorlabel)
-    self.add_widget(currentlabel)
-    self.add_widget(previouslabel)
-    self.add_widget(bestlabel)
+        ##create the bindings to update size,pos and values
+        self.bind(pos=self._update)
+        self.bind(size=self._update)
+        self.bind(currenttime=self._changetime)
+        self.bind(best=self._changebest)
 
+    def _update (self, *args):
+        ##fixing the positions and size
+        h = self.height/4
+        self.sectorlabel.center = (self.center_x , self.y+4*h)
+        self.currentlabel.center = (self.center_x , self.y + 3*h)
+        self.previouslabel.center = (self.center_x , self.center_y)
+        self.bestlabel.center = (self.center_x , self.y+h)
+        self.sectorlabel.size[1] = self.size[1]/4
+        self.currentlabel.size[1] = self.size[1]/4
+        self.previouslabel.size[1] = self.size[1]/4
+        self.bestlabel.size[1] = self.size[1]/4
 
-    ##create the bindings to update size,pos and values
-    self.bind = (self.pos , _update)
-    self.bind = (self.size , _update)
-    self.bind = (self.currenttime , _changetime)
-    self.bind = (self.best , _changebest)
+    def _changetime (self, *args):
+        self.currentlabel.text = self.currenttime
+        self.previouslabel.text = self.previousbest
+        self.bestlabel.text = self.best
 
-def _update (self, *args):
-    ##fixing the positions and size
-    h = self.height/4
-    self.sectorlabel.center = (self.center_x , self.center_y + 2*h)
-    self.currentlabel.center = (self.center_x , self.center_y + h)
-    self.previouslabel.center = (self.center_x , self.center_y - h)
-    self.bestlabel.center = (self.center_x , self.center_y - 2*h)
-
-def _changetime (self, *args):
-    self.currentlabel.text = self.currenttime
-    self.previouslabel.text = self.previoustime
-    self.bestlabel.text = self.best
-
-def _changebest (self, *args):
-    if self.currenttime < self.best :
-        self.previousbest = self.best
-        self.best = self.currenttime
+    def _changebest (self, *args):
+        if self.currenttime < self.best :
+            self.previousbest = self.best
+            self.best = self.currenttime

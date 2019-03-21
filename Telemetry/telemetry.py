@@ -47,6 +47,7 @@ if __name__ == '__main__':
 			Clock.schedule_interval(lambda *t: self.get_data(), 0.016)
 			main_window.add_widget(left_column)
 			main_window.add_widget(center_column)
+			main_window.add_widget(right_column)
 			return main_window
 		def get_data(self):
 			accel_x.points_list_t[0].append((self.i,math.sin(math.pi*self.i)))

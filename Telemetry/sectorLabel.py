@@ -14,24 +14,23 @@ from kivy.properties import BooleanProperty, ObjectProperty, NumericProperty,Lis
 
 
 Builder.load_string('''
-<PromAxis>:
+<SectorLabel>:
     canvas:
         Color:
             rgba: [1,1,1,0.1]
         Rectangle:
-            pos: self.x+self.font_size if self.font_size<=13 else self.x, self.y+self.size[1]/3
-            size: self.font_size*6,self.size[1]/3
+            pos: self.x, self.y
+            size: self.size
         Color:
             rgba: self.bgclr
         Line:
-            rectangle: self.x+self.font_size if self.font_size<=13 else self.x,self.y+self.height/3,self.font_size*6,self.height/3
+            rectangle: self.x,self.y,self.width,self.height
             width: 1
 ''')
 
-class PromAxis(,Widget):
+class SectorLabel(Label,Widget):
 	bgclr = ListProperty([1,1,1,0.1])
-    base = NumericProperty()
-    ceil = NumericProperty()
 	def __init__(self, bgclr, **kwargs):
 		self.bgclr=bgclr
-		super(PromAxis, self).__init__(**kwargs)
+		super(SectorLabel, self).__init__(**kwargs)
+
