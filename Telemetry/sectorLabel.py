@@ -17,20 +17,21 @@ Builder.load_string('''
 <SectorLabel>:
     canvas:
         Color:
-            rgba: [1,1,1,0.1]
+            rgba: self.bgclr
         Rectangle:
             pos: self.x, self.y
             size: self.size
         Color:
-            rgba: self.bgclr
+            rgba: self.lineclr
         Line:
             rectangle: self.x,self.y,self.width,self.height
             width: 1
 ''')
 
 class SectorLabel(Label,Widget):
-	bgclr = ListProperty([1,1,1,0.1])
-	def __init__(self, bgclr, **kwargs):
-		self.bgclr=bgclr
-		super(SectorLabel, self).__init__(**kwargs)
-
+    #lineclr = ListProperty([1,1,1,0.1])
+    #bgclr = ListProperty([1,1,1,0.1])
+    def __init__(self,bgclr=None,lineclr=None,**kwargs):
+        self.lineclr = lineclr if lineclr is not None  else [1,0,0,0.1]
+        self.bgclr = bgclr if bgclr is not None else [1,1,1,0]
+        super(SectorLabel, self).__init__(**kwargs)

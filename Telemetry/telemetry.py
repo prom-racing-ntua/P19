@@ -93,7 +93,11 @@ if __name__ == '__main__':
 
 			##create each sector
 			sector1.currenttime = str(self.i)
+			#sector1.lap = int(self.i)
 			sector2.currenttime = str(self.i/2)
+			#sector2.lap = int (self.i)
+			sector3.currenttime = str(self.i/10)
+			#sector3.lap = int(self.i)
 	try:
 		TelemetryApp().run()
 	except Exception as e:
