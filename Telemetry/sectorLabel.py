@@ -27,6 +27,8 @@ Builder.load_string('''
             rectangle: self.x,self.y,self.width,self.height
             width: 1
 ''')
+#binding pos and size with the update method does not affect
+#rectangles position, so its gonna be in different position 
 
 class SectorLabel(Label,Widget):
     lineclr = ListProperty([])

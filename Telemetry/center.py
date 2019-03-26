@@ -5,6 +5,10 @@ from kivy.uix.relativelayout import RelativeLayout
 from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
+from datetime import *
+from sectors import Sectors
+#from utcLabel import UtcLabel
+from utclbl import UtcLbl
 
 
 center_column = FloatLayout()
@@ -104,4 +108,11 @@ brake_tps_steering = PromGraph(
 				)
 center_column.add_widget(brake_tps_steering)
 
-
+utclbl1 = UtcLbl (
+	pos_hint = {'x':0.5,'y':0.85},
+    size_hint = (0.09,0.15)
+	)
+utclbl1.lineclr = [1,1,1,0]
+utclbl1.timelabel.lineclr = [1,1,1,0]
+utclbl1.datelabel.lineclr=[1,1,1,0]
+center_column.add_widget(utclbl1)

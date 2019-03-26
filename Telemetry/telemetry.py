@@ -21,6 +21,8 @@ from kivy.uix.slider import Slider
 from datetime import datetime
 import serial,time,math,random,queue,numpy
 from collections import deque
+from datetime import *
+
 
 
 from test import TestWidget
@@ -98,6 +100,9 @@ if __name__ == '__main__':
 			#sector2.lap = int (self.i)
 			sector3.currenttime = str(self.i/10)
 			#sector3.lap = int(self.i)
+
+			# utclbl1.utctime = accel_x.points_list_t
+			# utclbl1.utcdate = accel_y.points_list_t
 	try:
 		TelemetryApp().run()
 	except Exception as e:

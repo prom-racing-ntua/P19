@@ -22,12 +22,15 @@ indication.sectorlabel.lineclr = [1,1,1,0]
 indication.currentlabel.lineclr = [1,1,1,0]
 indication.previouslabel.lineclr = [1,1,1,0]
 indication.bestlabel.lineclr = [1,1,1,0]
-#indication.bgclr = (1,1,1,0)
+# indication.sectorlabel.bgclr = [1,1,1,0.5]
+# indication.currentlabel.bgclr = [1,1,1,0.5]
+# indication.previouslabel.bgclr = [1,1,1,0.5]
+# indication.bestlabel.bgclr = [1,1,1,0.5]
 
 right_column.add_widget(indication)
 
 laps = Sectors(
-   sectorname = "Laps",
+   sectorname = "Lap",
    pos_hint = {'x':0.69,'y':0.865},
    size_hint = (0.04,0.15)
 )

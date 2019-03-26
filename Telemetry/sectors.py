@@ -26,7 +26,7 @@ class Sectors(Widget):
     ## the values of the labels
     sectorname = StringProperty(" ")
     time = StringProperty("") ## serial input
-    best = StringProperty("100000")
+    best = StringProperty("1000")
     previousbest = StringProperty("")
     currenttime = StringProperty("")
     customcolor = ListProperty([])
