@@ -22,27 +22,48 @@ Builder.load_string('''
             ellipse: (self.x, self.y, self.width-80, self.height+160, self.anglestart,self.anglestop)
 
         ## first step lines (yellow) - low
-        ## line 1/3
+        ## line 1/6
         Color:
             rgba : self.lowclr1 if (self.progresslvl > 0) else [1,0,0,1]
         Line:
             id : lowline1
-            width : 2.2 if (self.progresslvl > 0) else 1
+            width : 1.6 if (self.progresslvl > 0) else 1
             ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart,self.anglestart+(self.progresslvl*10))
-        ## line 2/3
+        ## line 2/6
         Color:
-            rgba : self.lowclr2 if (self.progresslvl > 1) else [1,0,0,1]
+            rgba : self.lowclr2 if (self.progresslvl > 0.5) else [1,0,0,1]
         Line:
             id : lowline2
-            width : 3.4 if (self.progresslvl > 1) else 1
-            ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+10,self.anglestart+(self.progresslvl*10))
-        ## line 3/3
+            width : 2.2 if (self.progresslvl > 0.5) else 1
+            ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+5,self.anglestart+(self.progresslvl*10))
+        ## line 3/6
         Color:
-            rgba : self.lowclr3 if (self.progresslvl > 2) else [1,0,0,1]
+            rgba : self.lowclr3 if (self.progresslvl > 1) else [1,0,0,1]
         Line:
             id : lowline3
-            width : 4.8 if (self.progresslvl > 2) else 1
+            width : 2.8 if (self.progresslvl > 1) else 1
+            ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+10,self.anglestart+(self.progresslvl*10))
+        ## line 4/6
+        Color:
+            rgba : self.lowclr4 if (self.progresslvl > 1.5) else [1,0,0,1]
+        Line:
+            id : lowline4
+            width : 3.4 if (self.progresslvl > 1.5) else 1
+            ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+15,self.anglestart+(self.progresslvl*10))
+        ## line 5/6
+        Color:
+            rgba : self.lowclr5 if (self.progresslvl > 2) else [1,0,0,1]
+        Line:
+            id : lowline5
+            width : 4 if (self.progresslvl > 2) else 1
             ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+20,self.anglestart+(self.progresslvl*10))
+        ## line 6/6
+        Color:
+            rgba : self.lowclr6 if (self.progresslvl > 2.5) else [1,0,0,1]
+        Line:
+            id : lowline6
+            width : 4.6 if (self.progresslvl > 2.5) else 1
+            ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+25,self.anglestart+(self.progresslvl*10))
 
 
         ## second step lines (green) - medium 1
@@ -126,6 +147,9 @@ class ProgressBa (Widget) :
     lowclr1 = ListProperty ([])
     lowclr2 = ListProperty ([])
     lowclr3 = ListProperty ([])
+    lowclr4 = ListProperty ([])
+    lowclr5 = ListProperty ([])
+    lowclr6 = ListProperty ([])
     med1clr1 = ListProperty ([])
     med1clr2 = ListProperty ([])
     med1clr3 = ListProperty ([])

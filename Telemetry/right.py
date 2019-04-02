@@ -6,6 +6,7 @@ from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
 from sectors import *
+from progressbar import ProgressBa
 
 
 right_column = FloatLayout()
@@ -62,19 +63,23 @@ sector3 = Sectors(
 right_column.add_widget(sector3)
 
 progress1 = ProgressBa (
-    lowclr1 = ListProperty ([])
-    lowclr2 = ListProperty ([])
-    lowclr3 = ListProperty ([])
-    med1clr1 = ListProperty ([])
-    med1clr2 = ListProperty ([])
-    med1clr3 = ListProperty ([])
-    med2clr1 = ListProperty ([])
-    med2clr2 = ListProperty ([])
-    med2clr3 = ListProperty ([])
-    highclr1 = ListProperty ([])
-    highclr2 = ListProperty ([])
-    highclr3 = ListProperty ([])
-    anglestart =
-    anglestop =
-    
+    lowclr1 = [1,0.4,0,1],
+    lowclr2 = [1,0.5,1,0],
+    lowclr3 = [1,0.6,0,1],
+    lowclr4 = [1,0.7,0,1],
+    lowclr5 = [1,0.8,1,1],
+    lowclr6 = [1,1,0,1],
+    med1clr1 = [0,1,1,1],
+    med1clr2 = [0,1,1,1],
+    med1clr3 = [0,1,1,1],
+    med2clr1 = [0,1,1,1],
+    med2clr2 = [0,1,1,1],
+    med2clr3 = [0,1,1,1],
+    highclr1 = [0,1,1,1],
+    highclr2 = [0,1,1,1],
+    anglestart = 270,
+    anglestop = 390,
+    pos_hint = {'x':0.72 , 'y':0.38},
+    size_hint = (0.41,0.2)
 )
+right_column.add_widget(progress1)
