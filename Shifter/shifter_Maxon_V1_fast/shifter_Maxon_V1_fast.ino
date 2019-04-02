@@ -7,31 +7,41 @@
 //canbus den ksero an einai sosto to data aquisition kai to ti morfi mas dinei i ecu
 //peirama gia to launch sequence!!
 
-
+#include <PinChangeInt.h>
+#include <PID_v1.h>
 #include <SPI.h>
 #include "mcp_can.h"
 #include <Servo.h> 
+
 //PROSOXI!!!!!!!!!!!! OTAN ALLAZOUN TA PINS PREPEI NA ALLAZOUN KAI TA ANTISTOIXA PORT, DDR PIN
 #define pot_clutch_MIN 206   
 #define pot_clutch_MAX 390
 #define pot_error 15
-#define debounceDelay 30
-#define spark_delay 10
 
+#define spark_delay 10
 #define shift_t 100 //milliseconds to keep valve ON on a full shift          //NEEDS FIX becase of motor instead of neumatic valve
 #define clutch_t 100 ///wait the servo!
-
-#define sparkcut  2 //Gearcut pin at ECU                                     //FIX PIN because of can shield potential pin overlap
-#define shift_down 3
-#define shift_up 4
-#define port1 5  //moves lever up (upshift)
-#define port2 6  //moves lever down (downshift)
+//pins
+#define CHA      2                       // Quadrature encoder A pin
+#define CHB      3                       // Quadrature encoder B pin
+#define M1              5                       // PWM outputs to L298N H-Bridge motor driver module
+#define M2              6
+#define sparkcut  4 //Gearcut pin at ECU                                     //FIX PIN because of can shield potential pin overlap
+#define shift_down 9
+#define shift_up 8
 #define clutch_pin 7  //servo pin
 #define total_gears 5
 
+//pid variables
+double kp = 27 , ki = 2.5 , kd = 0.01;             // modify for optimal performance
+double input = 0, output = 0, setpoint = 0;
+volatile long encoderPos = 0;
+
+//general variables
 unsigned long current, previous, interval;
 uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
+
 //CANBUS variables
 uint8_t launch=0, autoshift=0, neutral=0, rpm=0, tps=0;
 unsigned char len = 0;
@@ -49,14 +59,28 @@ uint8_t launch_cancel=0;
 
 const int SPI_CS_PIN = 10;                                                      //FIX
 MCP_CAN CAN(SPI_CS_PIN);
+PID myPID(&input, &output, &setpoint, kp, ki, kd, DIRECT);  // if motor will only run at full speed try 'REVERSE' instead of 'DIRECT'
 Servo clutch;
 
 void setup() {
   Serial.begin(115200);
   CAN.begin(CAN_1000KBPS);                                                      //1Mbps
-  DDRD  = DDRD | B01100100;   //1->output, 0->input  TO OR einai gia na apofigo tin allagi ton 0, 1 pou einai tx, rx
-  PORTD =        B00011000;   //for pullup(sets these bit HIGH) check arduino site for pins(mega, uno, nano have different pins)
+  //DDRD  = DDRD | B01100100;   //1->output, 0->input  TO OR einai gia na apofigo tin allagi ton 0, 1 pou einai tx, rx
+  //PORTD =        B00011000;   //for pullup(sets these bit HIGH) check arduino site for pins(mega, uno, nano have different pins)
+  pinMode(shift_down, INPUT_PULLUP);
+  pinMode(shift_up, INPUT_PULLUP);
+  pinMode(CHA, INPUT_PULLUP);     
+  pinMode(CHB, INPUT_PULLUP); 
+  pinMode(sparkcut, OUTPUT);
   
+  attachInterrupt(digitalPinToInterrupt(3) ,count1,FALLING);                  // update encoder position allagi interrupt
+  TCCR1B = TCCR1B & 0b11111000 | 1;                   // set 31KHz PWM to prevent motor noise
+  myPID.SetMode(AUTOMATIC);
+  myPID.SetSampleTime(1);
+  myPID.SetOutputLimits(-255, 255);
+  Serial.begin (115200);                              // for debugging
+  setpoint = -30;                       // modify to fit motor and encoder characteristics, potmeter connected to A0
+
   attachInterrupt(0, canReads, FALLING); // start interrupt                    !!porsoxi borei na thelei allagi to 0!!
   
   CAN.init_Mask(0, 0, 0x3ff);                          // there are 2 mask in mcp2515, you need to set both of them
@@ -71,28 +95,24 @@ void setup() {
  
   clutch.attach(clutch_pin, 1000, 1600);  //1000->1600ms = 0->60 degrees      FIX
   clutch.writeMicroseconds(1000); //initialize servo's position               FIX
- 
-  interval=30;       //miliseconds
+  interval=30;
 }
 
 void loop() {
-  //current=millis();
+  current=millis();
   pot_pos = analogRead(A0);
   
   //check if the clutch is pressed
   if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
      clutch.writeMicroseconds(1480);                                     //why?
      
-     if((!(PIND & 0b00010000) || (autoshift==1 && rpm>n2[gear])) && shift_flag==1) { //up shift
+     if((!(PINH & 0b00100000) && shift_flag==1 || (autoshift==1 && rpm>n2[gear]))) { //up shift
            gear++;
            if(gear <= total_gears)  {    //check if we passed the total number of gears
-              PORTD |= (1<<5);
+              PORTG |= (1<<5);
               delay(spark_delay);
-              PORTD |= (1<<2);
-              delay(70);
-              PORTD &= ~(1<<2);
-              delay(50);
-              PORTD &= ~(1<<5);
+              maxon_up();
+              PORTG &= ~(1<<5);
            }
            else {gear=5;}
            shift_flag=0;
@@ -100,14 +120,12 @@ void loop() {
            previous=current;
            previous +=interval;
       }
-      if((!(PIND & 0b00001000) || ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear])))) && shift_flag==1){
+      if((!(PINH & 0b01000000) && shift_flag==1 || ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear]))))){
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
              delay(clutch_t);
-             PORTD |= (1<<6);
-             delay(shift_t);
-             PORTD &= ~(1<<6);
+             maxon_down();
              clutch.writeMicroseconds(1480);
                    
           }
@@ -117,6 +135,7 @@ void loop() {
           previous=current;
           previous +=interval;
         }
+  
   }
   else if(pot_pos>pot_clutch_MIN && pot_pos<pot_clutch_MAX){ //the clutch is pressed
 
@@ -124,14 +143,12 @@ void loop() {
     clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 1480, 1200);
     clutch.writeMicroseconds(clutch_pos);
     
-    if((!(PIND & 0b00010000)) && shift_flag==1){      
+    if((!(PINH & 0b00100000)) && shift_flag==1){      
         gear++;
         if(gear <= total_gears)  {
             clutch.writeMicroseconds(1200);
             delay(clutch_t);
-            PORTD |= (1<<5);
-            delay(shift_t);
-            PORTD &= ~(1<<5);
+            maxon_up();
             clutch.writeMicroseconds(clutch_pos);
         }
         else{gear=5;}
@@ -140,14 +157,12 @@ void loop() {
         previous=current;
         previous +=interval;
     }
-    if(!(PIND & 0b00001000) && shift_flag==1){        
+    if(!(PINH & 0b01000000) && shift_flag==1){        
         gear--;
         if(gear>=1) {
            clutch.writeMicroseconds(1200);
            delay(clutch_t);
-           PORTD |= (1<<6);
-           delay(shift_t);
-           PORTD &= ~(1<<6);
+           maxon_down();
            clutch.writeMicroseconds(clutch_pos);
         }
         else{gear=0;}
@@ -184,17 +199,15 @@ void loop() {
       clutch.writeMicroseconds(1200);
       delay(clutch_t);
       for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
-      PORTD |= (1<<6);
-      delay(shift_t);                                             //ISOS THELEI MEGALITERO DELAY
-      PORTD &= ~(1<<6); 
+          maxon_down();
       }
       clutch.writeMicroseconds(clutch_pos);
       gear=0;
       neutral=0;
    }
-  }
+  } 
   if(current>previous){   //Debouncing method
-    if((PIND & 0b00010000) && (PIND & 0b00001000)){  //if(digitalRead(shift_up)==HIGH  && digitalRead(shift_down)==HIGH) //means we have released both shifting pads
+    if((PINH & 0b00100000) && (PINH & 0b01000000)){  //if(digitalRead(shift_up)==HIGH  && digitalRead(shift_down)==HIGH) //means we have released both shifting pads
        shift_flag=1;
     }
   }
@@ -224,4 +237,52 @@ void canReads() {
       rpm=buf[6];            //FIX BIT!!
     }
 }
+
+
+
+void count1() {
+ if (PINE & 0b00010000){encoderPos--;}else{encoderPos++;}
+}
+
+void maxon_up(){
+  setpoint=30;
+  while((output<=1.7 )&& (output>=-1.7)){
+    input = encoderPos ;                                // data from encoder
+    myPID.Compute();                                    // calculate new output
+    pwmOut(output);
+  }
+  setpoint=0;
+  while((output<=1.7 )&& (output>=-1.7)){
+      input = encoderPos ;                                // data from encoder
+      myPID.Compute();                                    // calculate new output
+      pwmOut(output);
+  }
+}     
+
+void maxon_down(){
+  setpoint=-30;
+  while((output<=1.7 )&& (output>=-1.7)){
+    input = encoderPos ;                                // data from encoder
+    myPID.Compute();                                    // calculate new output
+    pwmOut(output);
+  }
+  setpoint=0;
+  while((output<=1.7 )&& (output>=-1.7)){
+      input = encoderPos ;                                // data from encoder
+      myPID.Compute();                                    // calculate new output
+      pwmOut(output);
+  }
+}     
+
+void pwmOut(int out) {                                // to H-Bridge board
+ if (out > 0) {
+   analogWrite(M1, out);                             // drive motor CW
+   analogWrite(M2, 0);
+ }
+ else {
+   analogWrite(M1, 0);
+   analogWrite(M2, abs(out));                        // drive motor CCW
+ }
+}
+
 
