@@ -36,6 +36,11 @@ def convert(clat,clon):    ##convert gps coords
 	lon=int(clon[0:3])+round(float(clon[3:10])/60,6)
 	return lat,lon
 
+file = open("track.txt","r")
+temp = []
+j=0
+for line in file:
+	temp.append((float(line.split(',')[0]),float(line.split(',')[1])))
 
 if __name__ == '__main__':
 	# ser = serial.Serial('COM3',115200)   ##(for windows)
@@ -92,7 +97,9 @@ if __name__ == '__main__':
 
 			accel_x.change = accel_y.change = brake_tps_steering.change = gear_rpm_speed.change = roll_pitch.change = shock_travel.change = True
 			self.i+=0.016
-
+			global j
+			j+=0.5
+			track_map.raw_coords=temp[int(j)%len(temp)]
 			##create each sector
 			sector1.currenttime = str(self.i)
 			#sector1.lap = int(self.i)
@@ -107,6 +114,8 @@ if __name__ == '__main__':
 		TelemetryApp().run()
 	except Exception as e:
 		# ser.close()
+		file.close()
+
 		raise e
 
 
