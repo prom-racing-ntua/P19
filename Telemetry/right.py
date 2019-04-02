@@ -60,3 +60,21 @@ sector3 = Sectors(
     size_hint=(0.09,0.15)
 )
 right_column.add_widget(sector3)
+
+progress1 = ProgressBa (
+    lowclr1 = ListProperty ([])
+    lowclr2 = ListProperty ([])
+    lowclr3 = ListProperty ([])
+    med1clr1 = ListProperty ([])
+    med1clr2 = ListProperty ([])
+    med1clr3 = ListProperty ([])
+    med2clr1 = ListProperty ([])
+    med2clr2 = ListProperty ([])
+    med2clr3 = ListProperty ([])
+    highclr1 = ListProperty ([])
+    highclr2 = ListProperty ([])
+    highclr3 = ListProperty ([])
+    anglestart =
+    anglestop =
+    
+)
