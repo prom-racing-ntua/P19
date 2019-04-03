@@ -9,7 +9,6 @@ from sectors import *
 from progressbar import ProgressBa
 from progressbar2 import ProgressBar2
 
-
 right_column = FloatLayout()
 indication = Sectors(
     sectorname = " ",
