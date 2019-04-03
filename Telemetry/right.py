@@ -7,6 +7,7 @@ from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
 from sectors import *
 from progressbar import ProgressBa
+from progressbar2 import ProgressBar2
 
 
 right_column = FloatLayout()
@@ -63,23 +64,37 @@ sector3 = Sectors(
 right_column.add_widget(sector3)
 
 progress1 = ProgressBa (
-    lowclr1 = [1,0.4,0,1],
-    lowclr2 = [1,0.5,1,0],
-    lowclr3 = [1,0.6,0,1],
-    lowclr4 = [1,0.7,0,1],
-    lowclr5 = [1,0.8,1,1],
+    lowclr1 = [1,1,0,0.5],
+    lowclr2 = [1,1,0,0.6],
+    lowclr3 = [1,1,0,0.7],
+    lowclr4 = [1,1,0,0.8],
+    lowclr5 = [1,1,0,0.9],
     lowclr6 = [1,1,0,1],
-    med1clr1 = [0,1,1,1],
-    med1clr2 = [0,1,1,1],
-    med1clr3 = [0,1,1,1],
-    med2clr1 = [0,1,1,1],
-    med2clr2 = [0,1,1,1],
-    med2clr3 = [0,1,1,1],
-    highclr1 = [0,1,1,1],
-    highclr2 = [0,1,1,1],
+    med1clr1 = [0,1,0,0.5],
+    med1clr2 = [0,1,0,0.6],
+    med1clr3 = [0,1,0,0.7],
+    med1clr4 = [0,1,0,0.8],
+    med1clr5 = [0,1,0,0.9],
+    med1clr6 = [0,1,0,1],
+    med2clr1 = [0,0,1,0.8],
+    med2clr2 = [0,0,1,0.6],
+    med2clr3 = [0,0,1,0.7],
+    med2clr4 = [0,0,1,0.8],
+    med2clr5 = [0,0,1,0.9],
+    med2clr6 = [0,0,1,1],
+    highclr1 = [1,0,0,1],
+    highclr2 = [1,0,0,0.9],
+    highclr3 = [1,0,0,1],
     anglestart = 270,
     anglestop = 390,
     pos_hint = {'x':0.72 , 'y':0.38},
     size_hint = (0.41,0.2)
 )
 right_column.add_widget(progress1)
+# progresstest = ProgressBar2 (
+#     anglestart = 270,
+#     anglestop = 390,
+#     pos_hint = {'x':0.72 , 'y':0.18},
+#     size_hint = (0.41,0.2)
+# )
+#right_column.add_widget(progresstest)
