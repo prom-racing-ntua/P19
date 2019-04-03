@@ -218,3 +218,4 @@ class ProgressBa (Widget) :
         print ("mphka super __init__")
         print (self.anglestart)
         print (self.anglestart+(self.progresslvl*10))
+        
