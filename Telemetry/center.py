@@ -1,7 +1,7 @@
 from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.relativelayout import RelativeLayout
-
+from kivy.uix.image import Image
 from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
@@ -108,11 +108,18 @@ brake_tps_steering = PromGraph(
 				)
 center_column.add_widget(brake_tps_steering)
 
-utclbl1 = UtcLbl (
-	pos_hint = {'x':0.5,'y':0.85},
-    size_hint = (0.09,0.15)
-	)
-utclbl1.lineclr = [1,1,1,0]
-utclbl1.timelabel.lineclr = [1,1,1,0]
-utclbl1.datelabel.lineclr=[1,1,1,0]
-center_column.add_widget(utclbl1)
+
+center_column.add_widget(Image(
+			source="Images/prom_logo.png",
+			pos_hint={'x':0.40,'y':0.82},
+			size_hint=(0.20,0.20)))
+
+
+# utclbl1 = UtcLbl (
+# 	pos_hint = {'x':0.5,'y':0.85},
+#     size_hint = (0.09,0.15)
+# 	)
+# utclbl1.lineclr = [1,1,1,0]
+# utclbl1.timelabel.lineclr = [1,1,1,0]
+# utclbl1.datelabel.lineclr=[1,1,1,0]
+# center_column.add_widget(utclbl1)

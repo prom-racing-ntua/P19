@@ -17,7 +17,7 @@ Builder.load_string('''
 <CustomLabel>:
     canvas:
         Color:
-            rgba: [1,1,1,0.1]
+            rgba: [1,1,1,0]
         Rectangle:
             pos: self.x+self.font_size if self.font_size<=13 else self.x, self.y+self.size[1]/3
             size: self.font_size*6,self.size[1]/3

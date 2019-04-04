@@ -56,5 +56,8 @@ shock_travel = PromGraph(
 				)
 left_column.add_widget(shock_travel)
 
-track_map = TrackMap(pos_hint={'x':0,'y':0},size_hint=(0.3,0.25))
-left_column.add_widget(track_map)
+track_map = TrackMap()
+wrapper_relative=RelativeLayout(pos_hint={'x':0.8,'y':0.3},
+				size_hint=(0.2,0.2))
+wrapper_relative.add_widget(track_map)
+left_column.add_widget(wrapper_relative)
