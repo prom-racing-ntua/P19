@@ -19,7 +19,7 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.uix.slider import Slider
 from datetime import datetime
-import serial,time,math,random,queue,numpy
+import time,math,random,queue,numpy
 from collections import deque
 from datetime import *
 

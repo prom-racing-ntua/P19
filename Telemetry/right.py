@@ -10,6 +10,7 @@ from progressbar import ProgressBa
 from progressbar2 import ProgressBar2
 from gearlbl import GearLabel
 from speedlbl import SpeedLabel
+from warning_Label import WarningLabel
 
 right_column = FloatLayout()
 indication = Sectors(
@@ -104,6 +105,9 @@ progress1 = ProgressBa (
     size_hint = (0.41,0.2)
 )
 right_column.add_widget(progress1)
+
+
+
 # progresstest = ProgressBar2 (
 #     anglestart = 270,
 #     anglestop = 390,
@@ -126,3 +130,45 @@ speedlbl = SpeedLabel (
     size_hint = (0.09 , 0.10)
 )
 right_column.add_widget (speedlbl)
+
+warning1 = WarningLabel (
+    name = "Sensor1",
+    pos_hint = {'x':0.50,'y':0.50},
+    size_hint = (0.09,0.10)
+)
+right_column.add_widget(warning1)
+
+warning2 = WarningLabel (
+    name = "Sensor2",
+    pos_hint = {'x':0.50,'y':0.50},
+    size_hint = (0.09,0.10)
+)
+right_column.add_widget(warning2)
+
+warning3 = WarningLabel (
+    name = "Sensor3",
+    pos_hint = {'x':0.50,'y':0.50},
+    size_hint = (0.09,0.10)
+)
+right_column.add_widget(warning3)
+
+warning4 = WarningLabel (
+    name = "Sensor4",
+    pos_hint = {'x':0.50,'y':0.50},
+    size_hint = (0.09,0.10)
+)
+right_column.add_widget(warning4)
+
+warning5 = WarningLabel (
+    name = "Sensor5",
+    pos_hint = {'x':0.50,'y':0.50},
+    size_hint = (0.09,0.10)
+)
+right_column.add_widget(warning5)
+
+warning6 = WarningLabel (
+    name = "Sensor6",
+    pos_hint = {'x':0.50,'y':0.50},
+    size_hint = (0.09,0.10)
+)
+right_column.add_widget(warning6)
