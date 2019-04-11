@@ -6,9 +6,9 @@
  *    AUX3      :A1      3.3V:
  * CLUTCH       :Α2       GND:
  * SHIFT_UP     :Α3     RESET:
- *SHIFT_DOWN    :Α4        14:  (TX)
- *       N1     :Α5        13:  (RX):  AUX1
- *       N2     :Α6        12:  (SCL): AUX2
+ *SHIFT_DOWN    :Α4        14:  (TX):  AUX1
+ *       N1     :Α5        13:  (RX):  AUX2
+ *       N2     :Α6        12:  (SCL)
  *       M1     :0         11:  (SDA)
  *       M2     :1         10:  (MISO)
  *SERVO_SIG     :2          9:  (SCK)
@@ -18,35 +18,37 @@
  */
 
 //vres pos allazoume to clock (gia to moter 31kHz)
-// to setpoint prepei na to doume ligo....borei na iparxei kai kaliterow tropos na to allazoume
+// to setpoint prepei na to doume ligo....borei na iparxei kai kaliteros tropos na to allazoume
 //episis to autoshift thelei ena check
 // kai na milisei me ECU na doume ti dinei to tps kai ta loipa!
 //genika ta pins einai ok maparismena...
 
-
-//#include <PinChangeInt.h>
 #include <PID_v1.h>
 #include <SPI.h>
 #include "mcp_can.h"
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 206   //Fix   
-#define pot_clutch_MAX 390   //Fix
+#define pot_clutch_MIN 300   //Fix   
+#define pot_clutch_MAX 900   //Fix
 #define pot_error 15
 
 //delays
 #define clutch_t    100    //wait the servo!
-#define spark_delay 10     //wait the ECU!
+#define spark_delay  10    //wait the ECU!
 
 //pins
 #define CHA         5      // Quadrature encoder A pin
 #define CHB         6      // Quadrature encoder B pin
 #define M1          0      //maxon pwm output 1
 #define M2          1      //maxon pwm output 2
+#define led_up      A5     //shift up indication
+#define led_down    A6     //shift down indication
+#define led_clutch  A1     //clutch indication
 #define sparkcut    4      //Gearcut pin at ECU
-#define shift_up   18      //steering wheel right pad(shift up)
-#define shift_down 19      //steering wheel left pad(shift down)
+#define shift_up    A3     //steering wheel right pad(shift up)
+#define shift_down  A4     //steering wheel left pad(shift down)
+#define newtral     14
 #define clutch_pin  2      //servo signal
 #define total_gears 5
 
@@ -56,21 +58,23 @@ double input = 0, output = 0, setpoint = 0;
 volatile long encoderPos = 0;
 
 //general variables
-unsigned long current, previous, interval;
+unsigned long current, previous, interval=30;
 uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
 
 //CANBUS variables
-uint8_t launch=0, autoshift=0, neutral=0, rpm=0, tps=0;
+uint8_t launch=0, autoshift=0, neutral=0;
+uint8_t launch_prev=0, neutral_prev=0;
 unsigned char len = 0;
 unsigned char buf[8];
+int gear=0, rpm=0, tps=0;
+
 
 //autoshift variables
 int n2[total_gears]={9500, 9500, 9500, 9500, 99999};
 int n_accel[total_gears]={0, 2500, 3000, 3500, 4800};
 int n_brake[total_gears]={0, 3000, 3600, 4500, 5600};
 int tps_min=5, tps_max=90;                          // pososto petaloudas !!!       prosoxi prepei na doume se ti morfi to dinei i ecu!!!
-uint8_t gear=0;
 
 //launch control variables
 uint8_t launch_cancel=0;
@@ -85,11 +89,15 @@ void setup() {
   CAN.begin(CAN_1000KBPS);                           // 1Mbps
   pinMode(shift_down, INPUT_PULLUP);
   pinMode(shift_up, INPUT_PULLUP);
+  pinMode(newtral, INPUT_PULLUP);
   pinMode(CHA, INPUT_PULLUP);     
   pinMode(CHB, INPUT_PULLUP); 
   pinMode(sparkcut, OUTPUT);
   pinMode(M1, OUTPUT);
   pinMode(M2, OUTPUT);
+  pinMode(led_up, OUTPUT);
+  pinMode(led_down, OUTPUT);
+  pinMode(led_clutch, OUTPUT);
   
   clutch.attach(clutch_pin, 1000, 1600);               // 1000->1600ms = 0->60 degrees      FIX
   clutch.writeMicroseconds(1000);                      // initialize servo's position               FIX
@@ -112,18 +120,17 @@ void setup() {
   CAN.init_Filt(3, 0, 0x07);                           // launch button + neutral button + autoshift button
   CAN.init_Filt(4, 0, 0x08);                           // ecu rpm & tps
   CAN.init_Filt(5, 0, 0x09);                           // gear!!
-  interval=30;
 }
 
 void loop() {
   current=millis();
-  pot_pos = analogRead(A2);
+  pot_pos = analogRead(A2);  //steering wheel potentiometer
   
   //check if the clutch is pressed
   if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
-     clutch.writeMicroseconds(1480);                                                      //why?
-     
-     if((digitalRead(shift_up)==LOW) && (shift_flag==1) || (autoshift==1 && rpm>n2[gear])) { //up shift
+     //clutch.writeMicroseconds(1480);                                                      //why?
+     digitalWrite(led_clutch, LOW);
+     if((digitalRead(shift_up)==LOW) && (shift_flag==1) && gear!=0 || (autoshift==1 && rpm>n2[gear])) { //up shift
            gear++;
            if(gear <= total_gears)  {    //check if we passed the total number of gears
               digitalWrite(sparkcut, HIGH);
@@ -133,33 +140,33 @@ void loop() {
            }
            else {gear=5;}
            shift_flag=0;
-           current=millis();
-           previous=current;
+           previous=millis();
            previous +=interval;
       }
       if((digitalRead(shift_down)==LOW) && shift_flag==1 || ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear])))) {
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
+             digitalWrite(led_clutch, HIGH);
              delay(clutch_t);
              maxon_down();
              clutch.writeMicroseconds(1480);
+             digitalWrite(led_clutch, LOW);
                    
           }
-          else {gear=0;}
+          else {gear=1;}
           shift_flag=0;
-          current=millis();
-          previous=current;
+          previous=millis();
           previous +=interval;
         }
   
   }
   else if(pot_pos>pot_clutch_MIN && pot_pos<pot_clutch_MAX){ //the clutch is pressed
-
+    digitalWrite(led_clutch, HIGH);
     //move servo
-    clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 1480, 1200);
+    clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 0, 1023);
     clutch.writeMicroseconds(clutch_pos);
-    
+   
     if((digitalRead(shift_up)==LOW) && shift_flag==1){      
         gear++;
         if(gear <= total_gears)  {
@@ -170,13 +177,12 @@ void loop() {
         }
         else{gear=5;}
         shift_flag=0;
-        current=millis();
-        previous=current;
+        previous=millis();
         previous +=interval;
     }
     if((digitalRead(shift_down)==LOW) && shift_flag==1){        
         gear--;
-        if(gear>=1) {
+        if(gear>=0) {
            clutch.writeMicroseconds(1200);
            delay(clutch_t);
            maxon_down();
@@ -184,11 +190,10 @@ void loop() {
         }
         else{gear=0;}
         shift_flag=0;
-        current=millis();
-        previous=current;
+        previous=millis();
         previous +=interval;
     }
-    if(launch==1) {
+    if(launch==1 && launch_prev==0) {
       pot_pos = analogRead(A2);  //mallon oxi
       //LAUNCH SEQUENCE
       while(1){                    
@@ -209,18 +214,25 @@ void loop() {
       
       
       }
-      launch=0;
+      launch_prev=1;
       launch_cancel=0;                                  
    }
-   if(neutral==1) {
+   if(digitalRead(newtral)==LOW) { //if(neutral==1 && neutral_prev==0){
       clutch.writeMicroseconds(1200);
       delay(clutch_t);
-      for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
-          maxon_down();
-      }
+      //for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
+          //maxon_down();
+          while(gear>0){
+            digitalWrite(led_down, HIGH);
+            delay(300);
+            digitalWrite(led_down, LOW);
+            delay(200);
+            gear--;
+          }
+      //}
       clutch.writeMicroseconds(clutch_pos);
       gear=0;
-      neutral=0;
+      neutral_prev=1;
    }
   } 
   if(current>previous){   //Debouncing method
@@ -237,25 +249,29 @@ int supermap(double pot_pos,double pot_clutch_min,double pot_clutch_max,double s
   return clutch_pos;
 }
 
+
 void canReads() {
   CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
   if(CAN.getCanId()==820) { //decimal value of canid      // FIX ADDRESS
     if(bitRead(buf[7], 0)==1)  //FIX BIT!! 
       launch=1;
+    else
+      launch_prev=0;
     if(bitRead(buf[6], 0)==1) //FIX BIT!!
       autoshift=1;
     else
       autoshift=0;
     if(bitRead(buf[5], 0)==1) //FIX BIT!!
        neutral=1;
+    else
+       neutral_prev=0;
+      
     }
     else if(CAN.getCanId()==821) {
       tps=buf[7];            //FIX BIT!! // den einai toso aplo...thelei kati akoma!!!
       rpm=buf[6];            //FIX BIT!!
     }
 }
-
-
 
 void count1() {
  if (digitalRead(CHA)==LOW)
