@@ -107,9 +107,11 @@ if __name__ == '__main__':
 			#sector2.lap = int (self.i)
 			sector3.currenttime = str(self.i/10)
 			#sector3.lap = int(self.i)
-			progress1.progresslvl = (1+math.sin(4*math.pi*self.i))*10
+			progress1.progresslvl = (1+math.sin(4*math.pi*self.i))*5
 			# utclbl1.utctime = accel_x.points_list_t
 			# utclbl1.utcdate = accel_y.points_list_t
+			gearlbl.currentgear = str(int(self.i))
+			speedlbl.currentspeed = str(int(self.i*100))
 	try:
 		TelemetryApp().run()
 	except Exception as e:
