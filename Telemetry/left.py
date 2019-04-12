@@ -5,6 +5,7 @@ from kivy.uix.relativelayout import RelativeLayout
 from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
+from trackmap import TrackMap
 
 
 left_column = FloatLayout()
@@ -54,3 +55,9 @@ shock_travel = PromGraph(
 				size_hint=(0.3,0.3)
 				)
 left_column.add_widget(shock_travel)
+
+track_map = TrackMap()
+wrapper_relative=RelativeLayout(pos_hint={'x':0.8,'y':0.3},
+				size_hint=(0.2,0.2))
+wrapper_relative.add_widget(track_map)
+left_column.add_widget(wrapper_relative)

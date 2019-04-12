@@ -19,7 +19,7 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.uix.slider import Slider
 from datetime import datetime
-import serial,time,math,random,queue,numpy
+import time,math,random,queue,numpy
 from collections import deque
 from datetime import *
 
@@ -36,6 +36,11 @@ def convert(clat,clon):    ##convert gps coords
 	lon=int(clon[0:3])+round(float(clon[3:10])/60,6)
 	return lat,lon
 
+file = open("track.txt","r")
+temp = []
+j=0
+for line in file:
+	temp.append((float(line.split(',')[0]),float(line.split(',')[1])))
 
 if __name__ == '__main__':
 	# ser = serial.Serial('COM3',115200)   ##(for windows)
@@ -92,7 +97,9 @@ if __name__ == '__main__':
 
 			accel_x.change = accel_y.change = brake_tps_steering.change = gear_rpm_speed.change = roll_pitch.change = shock_travel.change = True
 			self.i+=0.016
-
+			global j
+			j+=0.5
+			track_map.raw_coords=temp[int(j)%len(temp)]
 			##create each sector
 			sector1.currenttime = str(self.i)
 			#sector1.lap = int(self.i)
@@ -100,13 +107,17 @@ if __name__ == '__main__':
 			#sector2.lap = int (self.i)
 			sector3.currenttime = str(self.i/10)
 			#sector3.lap = int(self.i)
-
+			progress1.progresslvl = (1+math.sin(4*math.pi*self.i))*5
 			# utclbl1.utctime = accel_x.points_list_t
 			# utclbl1.utcdate = accel_y.points_list_t
+			gearlbl.currentgear = str(int(self.i))
+			speedlbl.currentspeed = str(int(self.i*100))
 	try:
 		TelemetryApp().run()
 	except Exception as e:
 		# ser.close()
+		file.close()
+
 		raise e
 
 
