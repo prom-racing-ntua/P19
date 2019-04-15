@@ -27,8 +27,8 @@
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 300   //Fix   
-#define pot_clutch_MAX 900   //Fix
+#define pot_clutch_MIN 300                                                                                                //Fix   
+#define pot_clutch_MAX 900                                                                                                //Fix
 #define pot_error 15
 
 //delays
@@ -47,11 +47,11 @@
 #define shift_up    A3     //steering wheel right pad(shift up)
 #define shift_down  A4     //steering wheel left pad(shift down)
 #define newtral     14
-#define clutch_pin  2      //servo signal
+#define servo_pin  2      //servo signal
 #define total_gears 5
 
 //pid variables
-double kp = 27 , ki = 2.5 , kd = 0.01;             // modify for optimal performance        //FIX
+double kp = 27 , ki = 2.5 , kd = 0.01;             // modify for optimal performance                                         //FIX
 double input = 0, output = 0, setpoint = 0;
 volatile long encoderPos = 0;
 
@@ -65,9 +65,8 @@ uint8_t launch=0, autoshift=0, neutral=0;
 uint8_t launch_prev=0, neutral_prev=0;
 unsigned char len = 0;
 unsigned char buf[8];
-uint8_t gear=0, tps=0;
+uint8_t gear=0, tps=0, rr=0, rl=0, fr=0, fl=0;
 uint16_t rpm=0;
-uint8_t rr=0, rl=0, fr=0, fl=0;
 
 //autoshift variables
 int n2[total_gears]={9500, 9500, 9500, 9500, 99999};
@@ -98,11 +97,11 @@ void setup() {
   pinMode(led_down, OUTPUT);
   pinMode(led_clutch, OUTPUT);
   
-  clutch.attach(clutch_pin, 1000, 1600);               // 1000->1600ms = 0->60 degrees      FIX
-  clutch.writeMicroseconds(1000);                      // initialize servo's position               FIX
+  clutch.attach(servo_pin, 1000, 1600);               // 1000->1600ms = 0->60 degrees                                                  FIX
+  clutch.writeMicroseconds(1000);                      // initialize servo's position                                                    FIX
   
   attachInterrupt(5 ,count1,FALLING);                  // encoder interrupt
-  //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise                                         FIXX!!!!!!!!!!!!!!!!!!!!!!!!
   myPID.SetMode(AUTOMATIC);
   myPID.SetSampleTime(1);
   myPID.SetOutputLimits(-255, 255);
@@ -118,16 +117,16 @@ void setup() {
   CAN.init_Filt(2, 0, 0x5fe);                          // front right hall
   CAN.init_Filt(3, 0, 0x600);                          // ecu rpm &tps
   CAN.init_Filt(4, 0, 0x604);                          // ecu gear
-  CAN.init_Filt(5, 0, 0x666);                           // launch button + neutral button + autoshift button
+  CAN.init_Filt(5, 0, 0x666);                          // launch button + neutral button + autoshift button
 }
 
 void loop() {
   current=millis();
-  pot_pos = analogRead(A2);  //steering wheel potentiometer
+  pot_pos = analogRead(A2);  //steering wheel clutch potentiometer
   
   //check if the clutch is pressed
   if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
-     //clutch.writeMicroseconds(1480);                                                      //why?
+     //clutch.writeMicroseconds(1480);                                                                                                         //why?
      digitalWrite(led_clutch, LOW);
      if((digitalRead(shift_up)==LOW) && (shift_flag==1) && gear!=0 || (autoshift==1 && rpm>n2[gear])) { //up shift
            gear++;
@@ -219,16 +218,10 @@ void loop() {
    if(neutral==1 && neutral_prev==0){
       clutch.writeMicroseconds(1200);
       delay(clutch_t);
-      //for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
-          //maxon_down();
-          while(gear>0){
-            digitalWrite(led_down, HIGH);
-            delay(300);
-            digitalWrite(led_down, LOW);
-            delay(200);
-            gear--;
-          }
-      //}
+      for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
+          maxon_down();
+          delay(100);                                                                                               //borei kai ligotero
+       }
       clutch.writeMicroseconds(clutch_pos);
       gear=0;
       neutral_prev=1;
@@ -269,7 +262,7 @@ void canReads() {
   }
 
   if(CAN.getCanId()==0x666) {
-    if(buf[6]&0b00000001)  //FIX BIT!! 
+    if(buf[6]&0b00000001) //FIX BIT!! 
       launch=1;
     else
       launch_prev=0;
