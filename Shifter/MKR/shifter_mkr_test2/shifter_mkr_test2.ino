@@ -100,7 +100,7 @@ void setup() {
   clutch.attach(servo_pin, 1000, 1600);               // 1000->1600ms = 0->60 degrees                                                  FIX
   clutch.writeMicroseconds(1000);                      // initialize servo's position                                                    FIX
   
-  attachInterrupt(5 ,count1,FALLING);                  // encoder interrupt
+  attachInterrupt(6 ,count1,FALLING);                  // encoder interrupt
   //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise                                         FIXX!!!!!!!!!!!!!!!!!!!!!!!!
   myPID.SetMode(AUTOMATIC);
   myPID.SetSampleTime(1);
