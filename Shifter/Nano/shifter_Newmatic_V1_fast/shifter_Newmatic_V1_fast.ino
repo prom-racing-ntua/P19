@@ -110,8 +110,9 @@ void loop() {
               PORTD |= (1<<2);
               delay(70);
               PORTD &= ~(1<<2);
-              delay(50);
+              delay(spark_delay);
               PORTD &= ~(1<<5);
+              
                            
            }
            else {gear=5;}
