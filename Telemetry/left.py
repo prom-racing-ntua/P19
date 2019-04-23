@@ -6,6 +6,7 @@ from customGraph import Graph
 from kivy.garden.graph import LinePlot, MeshLinePlot
 from promGraph import PromGraph
 from trackmap import TrackMap
+from tiretemp import TiretempLbl
 
 
 left_column = FloatLayout()
@@ -61,3 +62,12 @@ wrapper_relative=RelativeLayout(pos_hint={'x':0.8,'y':0.3},
 				size_hint=(0.2,0.2))
 wrapper_relative.add_widget(track_map)
 left_column.add_widget(wrapper_relative)
+
+frontleft = TiretempLbl (
+	lblname = "FL",
+    tempclr = [0,1,0,0.8],
+	tiretmp = 80,
+    pos_hint = {'x':0.01,'y':0.89},
+    size_hint = (0.09,0.10)
+	)
+left_column.add_widget(frontleft)

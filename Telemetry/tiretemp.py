@@ -1,5 +1,5 @@
 #tiretemp
-mport kivy
+import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.gridlayout import GridLayout
@@ -27,8 +27,8 @@ class TiretempLbl (Widget) :
     maxtemp = NumericProperty ()
 
     def __init__(self, **kwargs):
-        super (TiretempLbl,self).__init__ (**kwargs)
-        self.tirelabel = SectorLabel (text = str(tiretemp) , lineclr = [1,1,1,1], bgclr = tempclr , font_size = '18sp'  )
+        super(TiretempLbl,self).__init__ (**kwargs)
+        self.tirelabel = SectorLabel (text = str(tiretemp), lineclr = [1,1,1,1], bgclr = tempclr , font_size = '18sp')
         self.add_widget (self.tirelabel)
         ##create the bindings to update size,pos and values
         self.bind(pos=self._update)
@@ -41,3 +41,4 @@ class TiretempLbl (Widget) :
 
     def _change (self,*args):
         self.tirelabel.bgclr = tempclr
+        self.tirelabel.text = str(tiretemp)
