@@ -272,6 +272,6 @@ class ProgressBa (Widget) :
 
     def __init__ (self,**kwargs):
         super (ProgressBa,self).__init__(**kwargs)
-        print ("mphka super __init__")
+        print ("mphka super __init__ progresssbarr")
         print (self.anglestart)
         print (self.anglestart+(self.progresslvl*10))
