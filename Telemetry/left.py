@@ -66,6 +66,12 @@ left_column.add_widget(wrapper_relative)
 
 frontleft = TiretempLbl (
     pos_hint = {'x':0.01,'y':0.89},
-    size_hint = (0.09,0.10)
+    size_hint = (0.05,0.1)
 	)
 left_column.add_widget(frontleft)
+frontright = TiretempLbl (
+	pos_hint = {'x':0.07,'y':0.89},
+	size_hint = (0.05,0.1)
+)
+left_column.add_widget(frontright)
+frontright.templbl.text = 'fr'

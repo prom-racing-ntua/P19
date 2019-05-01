@@ -17,3 +17,4 @@ class CustomColor ():
         customcolor = lines
         print (customcolor)
         rgbfile.close() # Close file
+        return customcolor
