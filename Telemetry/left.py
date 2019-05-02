@@ -75,3 +75,13 @@ frontright = TiretempLbl (
 )
 left_column.add_widget(frontright)
 frontright.templbl.text = 'fr'
+backleft = TiretempLbl (
+    pos_hint = {'x':0.01,'y':0.79},
+    size_hint = (0.05,0.1)
+	)
+left_column.add_widget(backleft)
+backright = TiretempLbl (
+    pos_hint = {'x':0.07,'y':0.79},
+    size_hint = (0.05,0.1)
+	)
+left_column.add_widget(backright)
