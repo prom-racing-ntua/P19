@@ -29,7 +29,7 @@ roll_pitch = PromGraph(
 				y_grid=True,
 				ymin=-5,
 				ymax=5,
-				pos_hint={'x':0,'y':0.25},
+				pos_hint={'x':0,'y':0},
 				size_hint=(0.3,0.3)
 				)
 left_column.add_widget(roll_pitch)
@@ -53,7 +53,7 @@ shock_travel = PromGraph(
 				y_grid=True,
 				ymin=0,
 				ymax=100,
-				pos_hint={'x':0,'y':0.55},
+				pos_hint={'x':0,'y':0.35},
 				size_hint=(0.3,0.3)
 				)
 left_column.add_widget(shock_travel)

@@ -38,7 +38,7 @@ class TiretempLbl(SectorLabel,CustomColor) :
     def __init__(self, **kwargs):
         super(TiretempLbl,self).__init__ (**kwargs)
         print ("mphka super __init__ tire")
-        self.templbl = SectorLabel (text = str(self.temptsur),color = [1,1,1,1], font_size = '10sp')
+        self.templbl = SectorLabel (color = [1,0,0,1] , font_size = '18sp')
         # with self.canvas:
         #     self.rectlbl = Rectangle(pos = self.pos  , size_hint = (50,50))
 
@@ -54,7 +54,9 @@ class TiretempLbl(SectorLabel,CustomColor) :
         self.bgclr = [1,1,1,0]
 
     def _upgrade (self, *args):
-        self.templbl.text = str(self.temptsur)
-        print ('mphka update tiretemp')
-        print (self.templbl.text)
+        texttemp = str (self.temptsur)
+        self.templbl.text = texttemp[0:2]
+        print ('mphka upgrade tiretemp')
+        print (texttemp[0:2])
+        print (self.templbl.color)
         # self.templbl.bgclr = self.customclr[index]
