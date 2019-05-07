@@ -178,3 +178,4 @@ tpsgauge = TPSGauge (
     pos_hint = {'x':0.76, 'y':0.6},
     size_hint = (0.1 , 0.09)
 )
+tpsgauge.value = 50
