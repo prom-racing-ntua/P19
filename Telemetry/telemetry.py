@@ -113,6 +113,7 @@ if __name__ == '__main__':
 			gearlbl.currentgear = str(int(self.i))
 			speedlbl.currentspeed = str(int(self.i*100))
 			frontleft.temptsur = self.i
+			
 	try:
 		TelemetryApp().run()
 	except Exception as e:

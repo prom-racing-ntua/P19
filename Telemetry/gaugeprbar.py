@@ -25,12 +25,15 @@ class TPSGauge(Widget) :
 
         self.bind(pos = self._update)
         self.bind(size = self._update)
-        self.bind(value = self._vupdate)
+        self.bind(tpsvalue = self._vupdate)
 
 
     def _update(self,*args):
+        print ("mphka _update tpsgauge")
         self.center = self.center_x, self.center_y
         self.size = self.size[0],self.size[1]
 
     def _vupdate(self,*args):
+        print ('mphka _vupdate tpsgauge')
+        print (self.tpspb.value)
         self.tpspb.value = self.tpsvalue
