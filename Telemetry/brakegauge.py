@@ -13,18 +13,20 @@ from kivy.uix.progressbar import ProgressBar
 
 Builder.load_string('''
 <BrakeGauge>:
-    canvas:
-        Color:
-            rgba: [1,1,1,1]
-        Line:
-            pos: self.x,self.y
-            size: self.size[0],self.size[1]
+    ProgressBar:
+        id: brakepb
+        max: 1000
+        value: self.brakevalue
+        pos: self.x,self.y
+        size: self.size[0],self.size[1]
 ''')
 
 
 
 
 class BrakeGauge (Widget):
+    
+    brakevalue = NumericProperty()
     def __init__(self,**kwargs):
         super(BrakeGauge,self).__init__(**kwargs)
         print ('mphka __init__ brakegauge')

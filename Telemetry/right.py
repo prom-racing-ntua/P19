@@ -180,10 +180,9 @@ tpsgauge = TPSGauge (
     size_hint = (0.2,0.1)
 )
 right_column.add_widget(tpsgauge)
-tpsgauge.tpsvalue = 500
 
 brakegauge = BrakeGauge (
     pos_hint = {'x':0.76,'y':0.6},
     size_hint = (0.2,0.1)
 )
-right_column.add_widget(brakegauge)
+# right_column.add_widget(brakegauge)

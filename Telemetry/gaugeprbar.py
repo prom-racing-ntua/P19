@@ -11,29 +11,20 @@ from kivy.lang import Builder
 from sectorLabel import SectorLabel
 from kivy.uix.progressbar import ProgressBar
 
-class TPSGauge(Widget) :
-    tpsvalue = NumericProperty(750)
-    # max = NumericProperty(1000)
-    def __init__(self, **kwargs):
-        super(TPSGauge,self).__init__ (**kwargs)
-        print ("mphka __init__ tpsgauge")
-        self.tpspb = ProgressBar(max=1000)
-        # self.brakepb = ProgressBar(max = 1000)
-
-        self.add_widget(self.tpspb)
-        # self.add_widget(self.brakepb)
-
-        self.bind(pos = self._update)
-        self.bind(size = self._update)
-        self.bind(tpsvalue = self._vupdate)
+Builder.load_string('''
+<TPSGauge>:
+    ProgressBar:
+        id: tpspb
+        max: 1000
+        value: self.tpsvalue
+        pos: self.x,self.y
+        size: self.size[0],self.size[1]
+''')
 
 
-    def _update(self,*args):
-        print ("mphka _update tpsgauge")
-        self.center = self.center_x, self.center_y
-        self.size = self.size[0],self.size[1]
-
-    def _vupdate(self,*args):
-        print ('mphka _vupdate tpsgauge')
-        print (self.tpspb.value)
-        self.tpspb.value = self.tpsvalue
+class TPSGauge (Widget):
+    
+    tpsvalue = NumericProperty()
+    def __init__(self,**kwargs):
+        super(TPSGauge,self).__init__(**kwargs)
+        print ('mphka __init__ TPSgauge')
