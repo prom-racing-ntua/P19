@@ -51,7 +51,7 @@
 #define total_gears 5
 
 //pid variables
-double kp = 27 , ki = 2.5 , kd = 0.01;             // modify for optimal performance                                         //FIX
+double kp = 35 , ki = 2.3 , kd = 0.01;             // modify for optimal performance                                         //FIX
 double input = 0, output = 0, setpoint = 0;
 volatile long encoderPos = 0;
 
