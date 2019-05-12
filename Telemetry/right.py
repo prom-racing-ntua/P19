@@ -11,6 +11,8 @@ from progressbar2 import ProgressBar2
 from gearlbl import GearLabel
 from speedlbl import SpeedLabel
 from warning_Label import WarningLabel
+from gaugeprbar import TPSGauge
+from brakegauge import BrakeGauge
 
 right_column = FloatLayout()
 indication = Sectors(
@@ -172,3 +174,15 @@ warning6 = WarningLabel (
     size_hint = (0.09,0.10)
 )
 right_column.add_widget(warning6)
+
+tpsgauge = TPSGauge (
+    pos_hint = {'x':0.76,'y':0.6},
+    size_hint = (0.2,0.1)
+)
+right_column.add_widget(tpsgauge)
+
+brakegauge = BrakeGauge (
+    pos_hint = {'x':0.76,'y':0.6},
+    size_hint = (0.2,0.1)
+)
+# right_column.add_widget(brakegauge)

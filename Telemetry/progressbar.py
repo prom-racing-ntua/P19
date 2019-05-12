@@ -229,11 +229,6 @@ Builder.load_string('''
             width : 18 if (self.progresslvl > 10) else 1
             ellipse : (self.x,self.y,self.width-80 , self.height+160, self.anglestart+100,self.anglestart+(self.progresslvl*10))
 
-    Label:
-        id : rpm2k
-        text : 'rpm'
-
-
 ''')
 
 class ProgressBa (Widget) :
@@ -272,6 +267,6 @@ class ProgressBa (Widget) :
 
     def __init__ (self,**kwargs):
         super (ProgressBa,self).__init__(**kwargs)
-        print ("mphka super __init__")
+        print ("mphka super __init__ progresssbarr")
         print (self.anglestart)
         print (self.anglestart+(self.progresslvl*10))

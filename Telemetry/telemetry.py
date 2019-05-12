@@ -16,13 +16,14 @@ from kivy.garden.graph import LinePlot, MeshLinePlot
 from customGraph import Graph
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.popup import Popup
 from kivy.core.window import Window
 from kivy.uix.slider import Slider
 from datetime import datetime
 import time,math,random,queue,numpy
 from collections import deque
 from datetime import *
-
+from landingForm import LandingForm
 
 
 from test import TestWidget
@@ -51,10 +52,16 @@ if __name__ == '__main__':
 			Window.clearcolor = (0,0,0,1)
 			Window.fullscreen = False
 			main_window=FloatLayout()
-			Clock.schedule_interval(lambda *t: self.get_data(), 0.016)
 			main_window.add_widget(left_column)
 			main_window.add_widget(center_column)
 			main_window.add_widget(right_column)
+
+			popup = Popup(
+					title='Telemetry Setup',
+					content=Label(text="OPA"),
+					pos_hint={'x':0.20,'y':0.1},
+					size_hint=(0.6, 0.8))
+			main_window.add_widget(popup)
 			return main_window
 		def get_data(self):
 			accel_x.points_list_t[0].append((self.i,math.sin(math.pi*self.i)))
@@ -112,6 +119,9 @@ if __name__ == '__main__':
 			# utclbl1.utcdate = accel_y.points_list_t
 			gearlbl.currentgear = str(int(self.i))
 			speedlbl.currentspeed = str(int(self.i*100))
+			frontleft.temptsur = self.i
+			tpsgauge.tpsvalue = self.i*500
+
 	try:
 		TelemetryApp().run()
 	except Exception as e:
@@ -119,8 +129,3 @@ if __name__ == '__main__':
 		file.close()
 
 		raise e
-
-
-
-
-##test
