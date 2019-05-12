@@ -57,16 +57,17 @@ volatile long encoderPos = 0;
 
 //general variables
 unsigned long current, previous, interval=30;
+unsigned long current_m, previous_m, interval_m=300;
 uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
 
 //CANBUS variables
-uint8_t launch=0, autoshift=0, neutral=0;
-uint8_t launch_prev=0, neutral_prev=0;
+volatile uint8_t launch=0, autoshift=0, neutral=0;
+volatile uint8_t launch_prev=0, neutral_prev=0;
 unsigned char len = 0;
 unsigned char buf[8];
-uint8_t gear=0, tps=0, rr=0, rl=0, fr=0, fl=0;
-uint16_t rpm=0;
+volatile uint8_t gear=0, tps=0, rr=0, rl=0, fr=0, fl=0;
+volatile uint16_t rpm=0;
 
 //autoshift variables
 int n2[total_gears]={9500, 9500, 9500, 9500, 99999};
@@ -103,9 +104,9 @@ void setup() {
   attachInterrupt(6 ,count1,FALLING);                  // encoder interrupt
   //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise                                         FIXX!!!!!!!!!!!!!!!!!!!!!!!!
   myPID.SetMode(AUTOMATIC);
-  myPID.SetSampleTime(1);
+  myPID.SetSampleTime(10);                               //check
   myPID.SetOutputLimits(-255, 255);
-  setpoint = -30;                                      // modify to fit motor and encoder characteristics
+  setpoint = 0;                                      // modify to fit motor and encoder characteristics
 
   attachInterrupt(7, canReads, FALLING);               // CAN BUS interrupt
   
@@ -220,7 +221,7 @@ void loop() {
       delay(clutch_t);
       for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
           maxon_down();
-          delay(100);                                                                                               //borei kai ligotero
+          delay(100                                //borei kai ligotero
        }
       clutch.writeMicroseconds(clutch_pos);
       gear=0;
@@ -244,35 +245,37 @@ int supermap(double pot_pos,double pot_clutch_min,double pot_clutch_max,double s
 
 void canReads() {
   CAN.readMsgBuf(&len, buf);
-  if(CAN.getCanId()==0x5fc) {
+  if(CAN.getCanId()==0x5fc) {       //rear right module
     rr=uint8_t(buf[0]);
   }
-  else if(CAN.getCanId()==0x5fd) {
+  else if(CAN.getCanId()==0x5fd) {  //rear left module
     rl=uint8_t(buf[0]);
+    
   }
-  else if(CAN.getCanId()==0x5fe) {
+  else if(CAN.getCanId()==0x5fe) {  //front right module
     fr=uint8_t(buf[0]);
   }
-  else if(CAN.getCanId()==0x600) {
+  else if(CAN.getCanId()==0x600) {  //ECU
     rpm=uint16_t(buf[0]<<8 + buf[1]);
     tps=uint8_t(buf[2])/2;                          //prosoxi borei na einai lathos
   }
-  else if(CAN.getCanId()==0x604) {
+  else if(CAN.getCanId()==0x604) {  //ECU
     gear=uint8_t(buf[0]);
   }
 
-  if(CAN.getCanId()==0x666) {
-    if(buf[6]&0b00000001) //FIX BIT!! 
+  if(CAN.getCanId()==0x666) { //steering wheel
+    if(buf[6]&0b00000001)
       launch=1;
     else
       launch_prev=0;
-    if(buf[6]&0b00000010) //FIX BIT!!
+    if(buf[6]&0b00000010)
       autoshift=1;
     else
       autoshift=0;
-    if(buf[6]&0b00000100) //FIX BIT!!
+    if(buf[6]&0b00000100)
       neutral=1;
     else
+     neutral=0;                                                      //check
      neutral_prev=0;
    }
 }
@@ -285,35 +288,50 @@ void count1() {
 }
 
 void maxon_up(){
-  setpoint=30;
-  while((output<=1.7 )&& (output>=-1.7)){                //FIXXXXX!!!!!!!!!!!!!!
+  setpoint=-12;
+  previous_m=millis();
+  previous_m+=interval_m;
+  while(1){
+    current_m=millis();
+    if(current_m>previous_m) {break;}
     input = encoderPos ;                                // data from encoder
     myPID.Compute();                                    // calculate new output
     pwmOut(output);
   }
   setpoint=0;
-  while((output<=1.7 )&& (output>=-1.7)){
+  previous_m=millis();
+  previous_m+=interval_m;
+  while(1){
+      current_m=millis();
+      if(current_m>previous_m) {break;}
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
 }     
 
-void maxon_down(){                       //FIX
-  setpoint=-30;
-  while((output<=1.7 )&& (output>=-1.7)){
+void maxon_down(){
+  setpoint=12;
+  previous_m=millis();
+  previous_m+=interval_m;
+  while(1){
+    current_m=millis();
+    if(current_m>previous_m) {break;}
     input = encoderPos ;                                // data from encoder
     myPID.Compute();                                    // calculate new output
     pwmOut(output);
   }
   setpoint=0;
-  while((output<=1.7 )&& (output>=-1.7)){
+  previous_m=millis();
+  previous_m+=interval_m;
+  while(1){
+      current_m=millis();
+      if(current_m>previous_m) {break;}
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }
-}     
-
+  }     
+}
 void pwmOut(int out) {                                // to H-Bridge board
  if (out > 0) {
    analogWrite(M1, out);                             // drive motor CW
