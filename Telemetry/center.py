@@ -9,6 +9,7 @@ from datetime import *
 from sectors import Sectors
 #from utcLabel import UtcLabel
 from utclbl import UtcLbl
+from tempsectors import TempSectors
 
 
 center_column = FloatLayout()
@@ -113,6 +114,8 @@ center_column.add_widget(Image(
 			source="Images/prom_logo.png",
 			pos_hint={'x':0.40,'y':0.82},
 			size_hint=(0.20,0.20)))
+
+
 
 
 # utclbl1 = UtcLbl (

@@ -15,6 +15,7 @@ from kivy.properties import BooleanProperty, ObjectProperty, NumericProperty,Lis
 
 Builder.load_string('''
 <SectorLabel>:
+    id: self.name
     canvas:
         Color:
             rgba: self.bgclr
@@ -28,9 +29,10 @@ Builder.load_string('''
             width: 1
 ''')
 #binding pos and size with the update method does not affect
-#rectangles position, so its gonna be in different position 
+#rectangles position, so its gonna be in different position
 
 class SectorLabel(Label,Widget):
+    name = StringProperty()
     lineclr = ListProperty([])
     bgclr = ListProperty([])
     def __init__(self,bgclr=None,lineclr=None,**kwargs):

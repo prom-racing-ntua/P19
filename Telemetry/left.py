@@ -8,6 +8,7 @@ from promGraph import PromGraph
 from trackmap import TrackMap
 from tiretemp import TiretempLbl
 from customcolor import *
+from tempsectors import TempSectors
 
 
 left_column = FloatLayout()
@@ -53,7 +54,7 @@ shock_travel = PromGraph(
 				y_grid=True,
 				ymin=0,
 				ymax=100,
-				pos_hint={'x':0,'y':0.35},
+				pos_hint={'x':0,'y':0.30},
 				size_hint=(0.3,0.3)
 				)
 left_column.add_widget(shock_travel)
@@ -64,24 +65,81 @@ wrapper_relative=RelativeLayout(pos_hint={'x':0.8,'y':0.3},
 wrapper_relative.add_widget(track_map)
 left_column.add_widget(wrapper_relative)
 
-frontleft = TiretempLbl (
-    pos_hint = {'x':0.01,'y':0.89},
-    size_hint = (0.05,0.1)
-	)
-left_column.add_widget(frontleft)
-frontright = TiretempLbl (
-	pos_hint = {'x':0.07,'y':0.89},
-	size_hint = (0.05,0.1)
+# frontleft = TiretempLbl (
+#     pos_hint = {'x':0.01,'y':0.89},
+#     size_hint = (0.05,0.1)
+# 	)
+# # left_column.add_widget(frontleft)
+# frontright = TiretempLbl (
+# 	pos_hint = {'x':0.07,'y':0.89},
+# 	size_hint = (0.05,0.1)
+# )
+# # left_column.add_widget(frontright)
+# frontright.templbl.text = 'fr'
+# backleft = TiretempLbl (
+#     pos_hint = {'x':0.01,'y':0.79},
+#     size_hint = (0.05,0.1)
+# 	)
+# # left_column.add_widget(backleft)
+# backright = TiretempLbl (
+#     pos_hint = {'x':0.07,'y':0.79},
+#     size_hint = (0.05,0.1)
+# 	)
+# left_column.add_widget(backright)
+
+####### TEMP SECTORS #########
+
+coolantsector = TempSectors(
+	sectorname = 'Coolant',
+	sectorvalue = '97oC',
+	pos_hint = {'x':0., 'y':0.96},
+	size_hint = (0.08,0.04)
 )
-left_column.add_widget(frontright)
-frontright.templbl.text = 'fr'
-backleft = TiretempLbl (
-    pos_hint = {'x':0.01,'y':0.79},
-    size_hint = (0.05,0.1)
-	)
-left_column.add_widget(backleft)
-backright = TiretempLbl (
-    pos_hint = {'x':0.07,'y':0.79},
-    size_hint = (0.05,0.1)
-	)
-left_column.add_widget(backright)
+left_column.add_widget(coolantsector)
+oilprsector = TempSectors(
+	sectorname = 'Oil Pressure',
+	sectorvalue = '3 bar',
+	pos_hint = {'x':0.,'y':0.92},
+	size_hint = (0.08,0.04)
+)
+left_column.add_widget(oilprsector)
+
+oiltempsector = TempSectors(
+	sectorname = 'Oil Temp',
+	sectorvalue = '137oC',
+	pos_hint = {'x':0.,'y':0.88},
+	size_hint = (0.08,0.04)
+)
+left_column.add_widget(oiltempsector)
+
+afrsector = TempSectors (
+	sectorname = 'AFR',
+	sectorvalue = '13.2',
+	pos_hint = {'x':0.16,'y':0.96},
+	size_hint = (0.08,0.04)
+)
+left_column.add_widget(afrsector)
+
+batterysector = TempSectors (
+	sectorname = 'Battery',
+	sectorvalue = '13.2 V',
+	pos_hint = {'x':0.16,'y':0.92},
+	size_hint = (0.08,0.04)
+
+)
+left_column.add_widget(batterysector)
+
+errorsector = TempSectors (
+	sectorname = 'ERROR',
+	sectorvalue = 'engine',
+	pos_hint = {'x':0.16,'y':0.88},
+	size_hint = (0.08,0.04)
+)
+left_column.add_widget(errorsector)
+
+######### TIRE TEMP #################
+testtemp = TiretempLbl(
+	pos_hint={'x':0.01,'y':0.62},
+	size_hint = (0.27,0.20)
+)
+left_column.add_widget(testtemp)

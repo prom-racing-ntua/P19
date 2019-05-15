@@ -263,6 +263,7 @@ class ProgressBa (Widget) :
     progresslvl = BoundedNumericProperty (0,min=0,max=12,errorvalue=12)
     anglestart = NumericProperty ()
     anglestop = NumericProperty ()
+    rpmlvl = StringProperty()
 
 
     def __init__ (self,**kwargs):
@@ -270,3 +271,18 @@ class ProgressBa (Widget) :
         print ("mphka super __init__ progresssbarr")
         print (self.anglestart)
         print (self.anglestart+(self.progresslvl*10))
+
+    #     self.progresslabel = Label(font_size='20sp')
+    #     self.add_widget(self.progresslabel)
+    #     self.bind(pos = self._update)
+    #     self.bind(size = self._update)
+    #     self.bind(progresslvl = self._upgrade)
+    #
+    # def _update(self,*args):
+    #     self.progresslabel.pos = self.x,self.y+50
+    #     self.progresslabel.size = self.size[0],
+    #
+    # def _upgrade(self,*args):
+    #     self.rpmlvl = str(self.progresslvl)
+    #     self.progresslabel.text = str(self.rpmlvl[0:2])
+    #     self.progresslabel.color = [1,0.27,0,1]

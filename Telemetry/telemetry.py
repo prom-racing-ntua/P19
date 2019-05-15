@@ -112,9 +112,11 @@ if __name__ == '__main__':
 			# utclbl1.utcdate = accel_y.points_list_t
 			gearlbl.currentgear = str(int(self.i))
 			speedlbl.currentspeed = str(int(self.i*100))
-			frontleft.temptsur = self.i
+			# frontleft.temptsur = self.i
 			tpsgauge.tpsvalue = self.i*500
-
+			brakegauge.brakevalue = self.i*500
+			testtemp.temps = [10,20,30,40,45,55,60,65,70,75,80,85,90,95,96,98]
+			gg_diagram.value = [1,1]
 	try:
 		TelemetryApp().run()
 	except Exception as e:
