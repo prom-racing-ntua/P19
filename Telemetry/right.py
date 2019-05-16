@@ -25,12 +25,15 @@ indication = Sectors(
     size_hint = (0.07,0.15)
 )
 indication.currentlabel.text = 'this'
-indication.previouslabel.text = 'pr.best'
+indication.previouslabel.text = 'last'
 indication.bestlabel.text = 'best'
 indication.sectorlabel.lineclr = [1,1,1,0]
+# indication.sectorlabel.color = [1,1,1,1]
 indication.currentlabel.lineclr = [1,1,1,0]
+# indication.currentlabel.color = [1,1,1,1]
 indication.previouslabel.lineclr = [1,1,1,0]
 indication.bestlabel.lineclr = [1,1,1,0]
+# indication.bestlabel.color = [0.9,0.04,0.84,1]
 # indication.sectorlabel.bgclr = [1,1,1,0.5]
 # indication.currentlabel.bgclr = [1,1,1,0.5]
 # indication.previouslabel.bgclr = [1,1,1,0.5]
@@ -158,7 +161,8 @@ right_column.add_widget(bbprogress)
 
 dfsector = TempSectors(
 	sectorname = 'Downforce',
-	sectorvalue = '97kg',
+	sectorvalue = '180',
+    mesure = '  N',
 	pos_hint = {'x':0.7, 'y':0.20},
 	size_hint = (0.07,0.04)
 )
@@ -166,22 +170,24 @@ right_column.add_widget(dfsector)
 gripsector = TempSectors(
 	sectorname = 'Grip',
 	sectorvalue = '100',
+    mesure = ' g',
 	pos_hint = {'x':0.7,'y':0.16},
 	size_hint = (0.07,0.04)
 )
 right_column.add_widget(gripsector)
 
 understeersector = TempSectors(
-	sectorname = 'Understeer',
-	sectorvalue = '00000',
+	sectorname = 'Understeer1',
+	sectorvalue = '0.0',
+    mesure = ' deg',
 	pos_hint = {'x':0.7,'y':0.12},
 	size_hint = (0.07,0.04)
 )
 right_column.add_widget(understeersector)
 
 yawgsector = TempSectors (
-	sectorname = 'Yaw g',
-	sectorvalue = '00000',
+	sectorname = 'Understeer2',
+	sectorvalue = '50',
 	pos_hint = {'x':0.7,'y':0.08},
 	size_hint = (0.07,0.04)
 )
@@ -189,7 +195,7 @@ right_column.add_widget(yawgsector)
 
 lockupsector = TempSectors (
 	sectorname = 'Lock up',
-	sectorvalue = 'fl',
+	sectorvalue = '',
 	pos_hint = {'x':0.7,'y':0.04},
 	size_hint = (0.07,0.04)
 )
@@ -197,7 +203,8 @@ right_column.add_widget(lockupsector)
 
 slipratiosector = TempSectors (
 	sectorname = 'Slip Ratio',
-	sectorvalue = '123:45',
+	sectorvalue = '3.2',
+    mesure = '%',
 	pos_hint = {'x':0.7,'y':0.},
 	size_hint = (0.07,0.04)
 )

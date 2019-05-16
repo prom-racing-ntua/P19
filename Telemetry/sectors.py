@@ -27,7 +27,7 @@ class Sectors(Widget):
     sectorname = StringProperty(" ")
     time = StringProperty("") ## serial input
     best = StringProperty("1000")
-    previousbest = StringProperty("")
+    last = StringProperty("")
     currenttime = StringProperty("")
     customcolor = ListProperty([])
 
@@ -35,9 +35,9 @@ class Sectors(Widget):
         super(Sectors, self).__init__(**kwargs)
         ## Create the labels
         self.sectorlabel = SectorLabel(text = self.sectorname ,lineclr=[1,1,1,1], color = [0,1,1,1] , font_size = '18sp')
-        self.bestlabel = SectorLabel(text = self.best ,lineclr=[1,1,1,1], color = [0,1,0,1] , font_size = '18sp')
-        self.previouslabel = SectorLabel(text = self.previousbest ,lineclr=[1,1,1,1], color = [1,0,0,1] , font_size = '18sp')
-        self.currentlabel = SectorLabel(text = self.currenttime ,lineclr=[1,1,1,1], color = [0,0,1,1] , font_size = '18sp')
+        self.bestlabel = SectorLabel(text = self.best ,lineclr=[1,1,1,1], color = [0.9,0.04,0.84,1] , font_size = '18sp')
+        self.previouslabel = SectorLabel(text = self.last ,lineclr=[1,1,1,1], color = [1,1,0,1] , font_size = '18sp')
+        self.currentlabel = SectorLabel(text = self.currenttime ,lineclr=[1,1,1,1], color = [1,1,1,1] , font_size = '18sp')
         self.add_widget(self.sectorlabel)
         self.add_widget(self.currentlabel)
         self.add_widget(self.previouslabel)
@@ -66,9 +66,8 @@ class Sectors(Widget):
 
 
     def _changebest (self, *args):
-        if float(self.currenttime) < float(self.best) :
-            self.previousbest = self.best
-            self.best = self.currenttime
         self.currentlabel.text =self.currenttime[0:5]
-        self.previouslabel.text = self.previousbest[0:5]
+        if float(self.currenttime) < float(self.best) :
+            self.best = self.currenttime
+            self.previouslabel.text = self.last[0:5]
         self.bestlabel.text = self.best[0:5]

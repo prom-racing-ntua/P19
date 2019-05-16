@@ -16,8 +16,8 @@ Builder.load_string('''
 <BrakeBiasPB>:
     MDProgressBar:
         id: brakebias
-        max: 1000
-        value: 500
+        max: 100
+        value: 50
         pos: self.x,self.y
         orientation:'horizontal'
         color1: [0.37,0.35,0.35,1]
@@ -28,14 +28,16 @@ Builder.load_string('''
 
 class BrakeBiasPB (Widget):
 
-    bbvalue = NumericProperty(600)
+    bbvalue = NumericProperty(60)
     def __init__(self,**kwargs):
         super(BrakeBiasPB,self).__init__(**kwargs)
         print ('mphka __init__ BBPB')
-        self.backlabel = Label(text='BACK',font_size='10sp')
+        self.backlabel = Label(text='REAR',font_size='10sp')
         self.add_widget(self.backlabel)
         self.frontlabel = Label(text='FRONT',font_size='10sp')
         self.add_widget(self.frontlabel)
+        self.valuelabel = Label(text = str(self.ids.brakebias.value)+'%',font_size = '12.5sp')
+        self.add_widget(self.valuelabel)
         self.bind(pos = self._update)
         self.bind(size = self._update)
         self.bind(bbvalue = self._upgrade)
@@ -50,6 +52,8 @@ class BrakeBiasPB (Widget):
         self.backlabel.size = 50,20
         self.frontlabel.pos = self.x+self.size[0],self.y-6
         self.frontlabel.size =50,20
-
+        self.valuelabel.pos = self.center_x-10,self.y+10
+        self.valuelabel.size = 30,20
     def _upgrade(self,*args):
         self.ids.brakebias.value = self.bbvalue
+        self.valuelabel.text = str(self.ids.brakebias.value)+'%'

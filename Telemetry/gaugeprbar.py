@@ -17,7 +17,7 @@ Builder.load_string('''
     MDProgressBar:
         id: tpspb
         max: 1000
-        value: 500
+        value: 1000
         pos: self.x,self.y
         orientation:'vertical'
         color1: [0.37,0.35,0.35,1]

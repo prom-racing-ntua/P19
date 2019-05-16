@@ -17,7 +17,7 @@ Builder.load_string('''
     MDProgressBar:
         id: brakepb
         max: 1000
-        value: 500
+        value: 18
         orientation:'vertical'
         color1:[0.37,0.35,0.35,1]
         color2:[1,0,0,1]

@@ -10,7 +10,7 @@ from kivy.graphics import Rectangle,Color
 from kivy.lang import Builder
 from sectorLabel import SectorLabel
 
-##### IN PROGRESS ######
+##### Safety Sectors ######
 
 class TempSectors(Widget):
 
@@ -20,6 +20,8 @@ class TempSectors(Widget):
     sectorvalue = StringProperty()
     ##
     customcolor = ListProperty([])
+    ## mesure label
+    mesure = StringProperty()
     offset = NumericProperty(0)
 
     def __init__(self, **kwargs):
@@ -27,12 +29,13 @@ class TempSectors(Widget):
         # print (self.sectornames[1])
         # print ('x,y,size0,size1')
         # print (self.x,self.y,self.size[0],self.size[1])
-        self.sectorindex = SectorLabel(text = self.sectorname ,bgclr = [1,1,1,0],lineclr = [1,1,1,1],color = [0.1,1,0.9,1],font_size='16sp')
-        self.valuelabel = SectorLabel(text = self.sectorvalue , bgclr = [1,1,1,0],lineclr=[1,1,1,1],color = [0.1,1,0.20], font_size = '16sp')
+        self.sectorindex = SectorLabel(text =self.sectorname ,bgclr = [1,1,1,0],lineclr = [1,1,1,1],color = [0.1,1,0.9,1],font_size='16sp')
+        self.valuelabel = SectorLabel(text =str(self.sectorvalue)+self.mesure , bgclr = [1,1,1,0],lineclr=[1,1,1,1],color = [0.1,1,0.20], font_size = '16sp')
         self.add_widget (self.sectorindex)
         self.add_widget(self.valuelabel)
         self.bind(size =self._update)
         self.bind(pos = self._update)
+        self.bind(sectorvalue = self._upgrade)
 
     def _update(self,*args):
         self.sectorindex.size = self.size[0],self.size[1]
@@ -42,3 +45,6 @@ class TempSectors(Widget):
         self.valuelabel.size = self.size[0],self.size[1]
         self.valuelabel.pos = self.x+self.sectorindex.size[0],self.y
         # self.valuelabel.text.center = self.center_x,self.center_y
+
+    def _upgrade(self,*args):
+        self.valuelabel.text = str(self.sectorvalue)+str(self.mesure)

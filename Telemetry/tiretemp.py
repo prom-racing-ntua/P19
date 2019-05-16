@@ -91,7 +91,7 @@ class TiretempLbl(GridLayout) :
             print (self.floatcolor[i:i+3])
         #add opacity
         for i in self.colors:
-            i.append(float(0.8))
+            i.append(float(0.5))
         print('########## COLORS ##########')
         print(self.colors)
         print('## LENGTH ##')

@@ -272,17 +272,21 @@ class ProgressBa (Widget) :
         print (self.anglestart)
         print (self.anglestart+(self.progresslvl*10))
 
-    #     self.progresslabel = Label(font_size='20sp')
-    #     self.add_widget(self.progresslabel)
-    #     self.bind(pos = self._update)
-    #     self.bind(size = self._update)
-    #     self.bind(progresslvl = self._upgrade)
-    #
-    # def _update(self,*args):
-    #     self.progresslabel.pos = self.x,self.y+50
-    #     self.progresslabel.size = self.size[0],
-    #
-    # def _upgrade(self,*args):
-    #     self.rpmlvl = str(self.progresslvl)
-    #     self.progresslabel.text = str(self.rpmlvl[0:2])
-    #     self.progresslabel.color = [1,0.27,0,1]
+        self.progresslabel = Label(font_size='30sp')
+        self.rpmlabel = Label(text = 'RPM',font_size='10sp')
+        self.add_widget(self.progresslabel)
+        self.add_widget(self.rpmlabel)
+        self.bind(pos = self._update)
+        self.bind(size = self._update)
+        self.bind(progresslvl = self._upgrade)
+
+    def _update(self,*args):
+        self.progresslabel.pos = self.x,self.center_y+1.5*self.height
+        self.progresslabel.size = self.size[0]/10,self.size[1]/10
+        self.rpmlabel.pos = self.x,self.center_y+1.5*self.height-20
+        self.rpmlabel.size = self.size[0]/10,self.size[1]/10
+
+    def _upgrade(self,*args):
+        self.rpmlvl = str(self.progresslvl*1000)
+        self.progresslabel.text = self.rpmlvl[0:4]
+        self.progresslabel.color = [1,0,0,1]

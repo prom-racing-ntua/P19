@@ -60,7 +60,7 @@ accel_y = PromGraph(
 center_column.add_widget(accel_y)
 
 gear_rpm_speed = PromGraph(
-				ylabs=["GEAR: %.2f","RPM: %.2f","SPD: %.2f"],
+				ylabs=["GEAR: %.2f","RPM: %.2f","Vhcl.S: %.2f"],
 				num_of_plots=3,
 				xlabel='',
 				ylabel='',
@@ -85,6 +85,10 @@ gear_rpm_speed = PromGraph(
 				size_hint=(0.4,0.23)
 				)
 center_column.add_widget(gear_rpm_speed)
+gear_rpm_speed.add_y_axis(
+	ymin = 0,
+	ymax = 11
+)
 
 brake_tps_steering = PromGraph(
 				ylabs=["BRAKE: %.2f","TPS: %.2f","STEER: %.2f"],

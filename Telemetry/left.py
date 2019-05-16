@@ -28,8 +28,8 @@ roll_pitch = PromGraph(
 				ylog=False,
 				x_grid=True,
 				y_grid=True,
-				ymin=-5,
-				ymax=5,
+				ymin=-2,
+				ymax=2,
 				pos_hint={'x':0,'y':0},
 				size_hint=(0.3,0.3)
 				)
@@ -52,8 +52,8 @@ shock_travel = PromGraph(
 				ylog=False,
 				x_grid=True,
 				y_grid=True,
-				ymin=0,
-				ymax=100,
+				ymin=-30,
+				ymax=30,
 				pos_hint={'x':0,'y':0.30},
 				size_hint=(0.3,0.3)
 				)
@@ -131,7 +131,7 @@ left_column.add_widget(batterysector)
 
 errorsector = TempSectors (
 	sectorname = 'ERROR',
-	sectorvalue = 'engine',
+	sectorvalue = '-',
 	pos_hint = {'x':0.16,'y':0.88},
 	size_hint = (0.08,0.04)
 )

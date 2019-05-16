@@ -57,24 +57,25 @@ if __name__ == '__main__':
 			main_window.add_widget(right_column)
 			return main_window
 		def get_data(self):
-			accel_x.points_list_t[0].append((self.i,math.sin(math.pi*self.i)))
-			accel_y.points_list_t[0].append((self.i,math.sin(2*math.pi*self.i)/2))
-			brake_tps_steering.points_list_t[0].append((self.i,math.sin(2*math.pi*self.i)))
-			brake_tps_steering.points_list_t[1].append((self.i,2*math.sin(2*math.pi*self.i)))
-			brake_tps_steering.points_list_t[2].append((self.i,20*math.sin(2*math.pi*self.i)))
+			accel_x.points_list_t[0].append((self.i,-4))
+			accel_y.points_list_t[0].append((self.i,-4))
 
-			gear_rpm_speed.points_list_t[0].append((self.i,int(abs(5*math.sin(math.pi*self.i)))))
-			gear_rpm_speed.points_list_t[1].append((self.i,math.sin(math.pi*self.i)))
-			gear_rpm_speed.points_list_t[2].append((self.i,2*math.sin(math.pi*self.i)))
+			brake_tps_steering.points_list_t[0].append((self.i,-2))
+			brake_tps_steering.points_list_t[1].append((self.i,-2))
+			brake_tps_steering.points_list_t[2].append((self.i,-2))
 
-			roll_pitch.points_list_t[0].append((self.i,0.5*math.sin(math.pi*self.i)))
-			roll_pitch.points_list_t[1].append((self.i,math.sin(math.pi*self.i)))
-			roll_pitch.points_list_t[2].append((self.i,math.sin(2*math.pi*self.i)))
+			gear_rpm_speed.points_list_t[0].append((self.i,-1))
+			gear_rpm_speed.points_list_t[1].append((self.i,-1))
+			gear_rpm_speed.points_list_t[2].append((self.i,-1))
 
-			shock_travel.points_list_t[0].append((self.i,12*math.sin(math.pi*self.i)))
-			shock_travel.points_list_t[1].append((self.i,12+4*math.sin(math.pi*self.i)))
-			shock_travel.points_list_t[2].append((self.i,20*math.sin(math.pi*self.i)))
-			shock_travel.points_list_t[3].append((self.i,40*math.sin(math.pi*self.i)))
+			roll_pitch.points_list_t[0].append((self.i,-4))
+			roll_pitch.points_list_t[1].append((self.i,-4))
+			roll_pitch.points_list_t[2].append((self.i,-4))
+
+			shock_travel.points_list_t[0].append((self.i,-32))
+			shock_travel.points_list_t[1].append((self.i,-32))
+			shock_travel.points_list_t[2].append((self.i,-32))
+			shock_travel.points_list_t[3].append((self.i,-32))
 
 			accel_x.points_list_m[0].append((self.i,1.5*math.sin(math.pi*self.i)))
 			accel_y.points_list_m[0].append((self.i,1.5*math.sin(2*math.pi*self.i)/2))
@@ -110,11 +111,11 @@ if __name__ == '__main__':
 			progress1.progresslvl = (1+math.sin(4*math.pi*self.i))*5
 			# utclbl1.utctime = accel_x.points_list_t
 			# utclbl1.utcdate = accel_y.points_list_t
-			gearlbl.currentgear = str(int(self.i))
-			speedlbl.currentspeed = str(int(self.i*100))
+			gearlbl.currentgear = 4
+			speedlbl.currentspeed = 120
 			# frontleft.temptsur = self.i
-			tpsgauge.tpsvalue = self.i*500
-			brakegauge.brakevalue = self.i*500
+			# tpsgauge.tpsvalue = self.i*500
+			# brakegauge.brakevalue = self.i*500
 			testtemp.temps = [10,20,30,40,45,55,60,65,70,75,80,85,90,95,96,98]
 			gg_diagram.value = [1,1]
 	try:
