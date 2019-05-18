@@ -20,7 +20,7 @@ class GearLabel(Widget):
     def __init__(self, **kwargs):
         super(GearLabel, self).__init__(**kwargs)
         ## Create the labels
-        self.gearlabel = SectorLabel(text = str(self.currentgear) ,lineclr=[1,1,1,0], color = [0,0,1,1] , font_size = '70sp')
+        self.gearlabel = SectorLabel(text = str(self.currentgear) ,lineclr=[1,1,1,0], color = [1,1,0,1] , font_size = '70sp')
         # self.signlabel = SectorLabel(text = "gear" , color = [1,1,1,1] , font_size = '15sp')
         self.add_widget(self.gearlabel)
         # self.add_widget(self.signlabel)

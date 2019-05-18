@@ -10,13 +10,17 @@ from kivy.graphics import Rectangle,Color
 from kivy.lang import Builder
 from sectorLabel import SectorLabel
 from kivy.uix.progressbar import ProgressBar
+from progress import MDProgressBar
 
 Builder.load_string('''
 <BrakeGauge>:
-    ProgressBar:
+    MDProgressBar:
         id: brakepb
         max: 1000
-        value: self.brakevalue
+        value: 18
+        orientation:'vertical'
+        color1:[0.37,0.35,0.35,1]
+        color2:[1,0,0,1]
         pos: self.x,self.y
         size: self.size[0],self.size[1]
 ''')
@@ -25,8 +29,22 @@ Builder.load_string('''
 
 
 class BrakeGauge (Widget):
-    
+
     brakevalue = NumericProperty()
     def __init__(self,**kwargs):
         super(BrakeGauge,self).__init__(**kwargs)
         print ('mphka __init__ brakegauge')
+        self.brakelabel=Label(text = 'BRAKE',font_size='10sp')
+        self.add_widget(self.brakelabel)
+        self.bind(pos=self._update)
+        self.bind(size=self._update)
+        self.bind(brakevalue = self._upgrade)
+
+    def _update(self,*args):
+        self.ids.brakepb.center = self.center_x,self.center_y
+        self.ids.brakepb.size = self.size[0],self.size[1]
+        self.brakelabel.pos = self.center_x-10,self.y-self.brakelabel.size[1]
+        self.brakelabel.size = 50,20
+
+    def _upgrade(self, *args):
+        self.ids.brakepb.value = self.brakevalue

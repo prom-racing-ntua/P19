@@ -13,6 +13,9 @@ from speedlbl import SpeedLabel
 from warning_Label import WarningLabel
 from gaugeprbar import TPSGauge
 from brakegauge import BrakeGauge
+from brakebiaspb import BrakeBiasPB
+from tempsectors import TempSectors
+from accel import Accel
 
 right_column = FloatLayout()
 indication = Sectors(
@@ -22,12 +25,15 @@ indication = Sectors(
     size_hint = (0.07,0.15)
 )
 indication.currentlabel.text = 'this'
-indication.previouslabel.text = 'pr.best'
+indication.previouslabel.text = 'last'
 indication.bestlabel.text = 'best'
 indication.sectorlabel.lineclr = [1,1,1,0]
+# indication.sectorlabel.color = [1,1,1,1]
 indication.currentlabel.lineclr = [1,1,1,0]
+# indication.currentlabel.color = [1,1,1,1]
 indication.previouslabel.lineclr = [1,1,1,0]
 indication.bestlabel.lineclr = [1,1,1,0]
+# indication.bestlabel.color = [0.9,0.04,0.84,1]
 # indication.sectorlabel.bgclr = [1,1,1,0.5]
 # indication.currentlabel.bgclr = [1,1,1,0.5]
 # indication.previouslabel.bgclr = [1,1,1,0.5]
@@ -86,20 +92,20 @@ progress1 = ProgressBa (
     # med1clr10 = [0,1,0,1],
     # med1clr11 = [0,1,0,1],
     # med1clr12 = [0,1,0,1],
-    med2clr1 = [0,1,0.8,1],
-    med2clr2 = [0,0.75,1,1],
-    med2clr3 = [0,0.7,1,1],
-    med2clr4 = [0,0.65,1,1],
-    med2clr5 = [0,0.75,1,1],
-    med2clr6 = [0,0.65,1,1],
-    med2clr7 = [0,0.55,1,1],
-    med2clr8 = [0,0.45,1,1],
-    med2clr9 = [0,0.35,1,1],
-    med2clr10 = [0,0.25,1,1],
-    med2clr11 = [0,0.15,1,1],
-    med2clr12 = [0,0,1,1],
-    highclr1 = [1,0,0,1],
-    highclr2 = [1,0,0,0.9],
+    med2clr1 = [0.1,1,0.34,1],
+    med2clr2 = [0.1,1,0.51,1],
+    med2clr3 = [0.1,1,0.69,1],
+    med2clr4 = [0.1,1,0.9,1],
+    med2clr5 = [0.1,0.94,1,1],
+    med2clr6 = [0.1,0.7,1,1],
+    med2clr7 = [0.1,0.51,1,1],
+    med2clr8 = [0.1,0.38,1,1],
+    med2clr9 = [0.1,0.27,1,1],
+    med2clr10 = [0.1,0.1,1,1],
+    med2clr11 = [0.27,0.1,1,1],
+    med2clr12 = [0.58,0.1,1,1],
+    highclr1 = [1,0.19,0,1],
+    highclr2 = [1,0.10,0,1],
     highclr3 = [1,0,0,1],
     anglestart = 270,
     anglestop = 390,
@@ -133,56 +139,84 @@ speedlbl = SpeedLabel (
 )
 right_column.add_widget (speedlbl)
 
-warning1 = WarningLabel (
-    name = "Sensor1",
-    pos_hint = {'x':0.50,'y':0.50},
-    size_hint = (0.09,0.10)
-)
-right_column.add_widget(warning1)
-
-warning2 = WarningLabel (
-    name = "Sensor2",
-    pos_hint = {'x':0.50,'y':0.50},
-    size_hint = (0.09,0.10)
-)
-right_column.add_widget(warning2)
-
-warning3 = WarningLabel (
-    name = "Sensor3",
-    pos_hint = {'x':0.50,'y':0.50},
-    size_hint = (0.09,0.10)
-)
-right_column.add_widget(warning3)
-
-warning4 = WarningLabel (
-    name = "Sensor4",
-    pos_hint = {'x':0.50,'y':0.50},
-    size_hint = (0.09,0.10)
-)
-right_column.add_widget(warning4)
-
-warning5 = WarningLabel (
-    name = "Sensor5",
-    pos_hint = {'x':0.50,'y':0.50},
-    size_hint = (0.09,0.10)
-)
-right_column.add_widget(warning5)
-
-warning6 = WarningLabel (
-    name = "Sensor6",
-    pos_hint = {'x':0.50,'y':0.50},
-    size_hint = (0.09,0.10)
-)
-right_column.add_widget(warning6)
-
 tpsgauge = TPSGauge (
-    pos_hint = {'x':0.76,'y':0.6},
-    size_hint = (0.2,0.1)
+    pos_hint = {'x':0.89,'y':0.63},
+    size_hint = (0.1,0.1)
 )
 right_column.add_widget(tpsgauge)
 
 brakegauge = BrakeGauge (
-    pos_hint = {'x':0.76,'y':0.6},
-    size_hint = (0.2,0.1)
+    pos_hint = {'x':0.86,'y':0.63},
+    size_hint = (0.1,0.1)
 )
-# right_column.add_widget(brakegauge)
+right_column.add_widget(brakegauge)
+
+bbprogress = BrakeBiasPB(
+    pos_hint = {'x':0.77,'y':0.59},
+    size_hint = (0.1,0.00001)
+)
+right_column.add_widget(bbprogress)
+
+###### TEMP SECTORS #########
+
+dfsector = TempSectors(
+	sectorname = 'Downforce',
+	sectorvalue = '180',
+    mesure = '  N',
+	pos_hint = {'x':0.7, 'y':0.20},
+	size_hint = (0.07,0.04)
+)
+right_column.add_widget(dfsector)
+gripsector = TempSectors(
+	sectorname = 'Grip',
+	sectorvalue = '100',
+    mesure = ' g',
+	pos_hint = {'x':0.7,'y':0.16},
+	size_hint = (0.07,0.04)
+)
+right_column.add_widget(gripsector)
+
+understeersector = TempSectors(
+	sectorname = 'Understeer1',
+	sectorvalue = '0.0',
+    mesure = ' deg',
+	pos_hint = {'x':0.7,'y':0.12},
+	size_hint = (0.07,0.04)
+)
+right_column.add_widget(understeersector)
+
+yawgsector = TempSectors (
+	sectorname = 'Understeer2',
+	sectorvalue = '50',
+	pos_hint = {'x':0.7,'y':0.08},
+	size_hint = (0.07,0.04)
+)
+right_column.add_widget(yawgsector)
+
+lockupsector = TempSectors (
+	sectorname = 'Lock up',
+	sectorvalue = '',
+	pos_hint = {'x':0.7,'y':0.04},
+	size_hint = (0.07,0.04)
+)
+right_column.add_widget(lockupsector)
+
+slipratiosector = TempSectors (
+	sectorname = 'Slip Ratio',
+	sectorvalue = '3.2',
+    mesure = '%',
+	pos_hint = {'x':0.7,'y':0.},
+	size_hint = (0.07,0.04)
+)
+right_column.add_widget(slipratiosector)
+
+gg_diagram = Accel(
+    value=[0,0],
+    size_backgnd=220,
+    size_text=20,
+    widget_unit='g',
+    widget_name="Acceleration",
+    pos_hint = {'x':0.84,'y':0.02},
+    size_hint = (0.15,0.24)
+    )
+right_column.add_widget(gg_diagram)

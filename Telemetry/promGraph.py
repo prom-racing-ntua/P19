@@ -79,5 +79,3 @@ class PromGraph(Graph,Widget,HoverBehavior):
 	def show_selected_value(self,spinner, text):
 		self.marg = int(text.split()[0])
 		self.x_ticks_major = int(text.split()[0])/5
-
-
