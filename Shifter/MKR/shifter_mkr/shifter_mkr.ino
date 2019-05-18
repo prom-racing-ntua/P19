@@ -70,7 +70,7 @@ volatile uint8_t gear=0, tps=0, rr=0, rl=0, fr=0, fl=0;
 volatile uint16_t rpm=0;
 
 //autoshift variables
-int n2[total_gears]={9500, 9500, 9500, 9500, 99999};
+int n2[total_gears]={9500, 9500, 9500, 9500, 20000};
 int n_accel[total_gears]={0, 2500, 3000, 3500, 4800};
 int n_brake[total_gears]={0, 3000, 3600, 4500, 5600};
 uint8_t tps_min=5, tps_max=90;
@@ -181,10 +181,16 @@ void loop() {
     }
     if((digitalRead(shift_down)==LOW) && shift_flag==1){        
         gear--;
-        if(gear>=0) {
+        if(gear>0) {
            clutch.writeMicroseconds(1200);
            delay(clutch_t);
            maxon_down();
+           clutch.writeMicroseconds(clutch_pos);
+        }
+        else if(gear==1) {
+           clutch.writeMicroseconds(1200);
+           delay(clutch_t);
+           maxon_down_half();
            clutch.writeMicroseconds(clutch_pos);
         }
         else{gear=0;}
@@ -219,10 +225,11 @@ void loop() {
    if(neutral==1 && neutral_prev==0){
       clutch.writeMicroseconds(1200);
       delay(clutch_t);
-      for(int i=0; i<gear; i++) {                  //shift down all the way to neutral
+      for(int i=0; i<gear-1; i++) {                  //shift down all the way to first
           maxon_down();
-          delay(100                                //borei kai ligotero
-       }
+          delay(100);                             //borei kai ligotero
+      }
+      maxon_down_half();                           //shift down to neutral
       clutch.writeMicroseconds(clutch_pos);
       gear=0;
       neutral_prev=1;
@@ -288,7 +295,7 @@ void count1() {
 }
 
 void maxon_up(){
-  setpoint=-12;
+  setpoint=-12;                                                                           //FIX
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -311,7 +318,30 @@ void maxon_up(){
 }     
 
 void maxon_down(){
-  setpoint=12;
+  setpoint=12;                                                                              //FIX
+  previous_m=millis();
+  previous_m+=interval_m;
+  while(1){
+    current_m=millis();
+    if(current_m>previous_m) {break;}
+    input = encoderPos ;                                // data from encoder
+    myPID.Compute();                                    // calculate new output
+    pwmOut(output);
+  }
+  setpoint=0;
+  previous_m=millis();
+  previous_m+=interval_m;
+  while(1){
+      current_m=millis();
+      if(current_m>previous_m) {break;}
+      input = encoderPos ;                                // data from encoder
+      myPID.Compute();                                    // calculate new output
+      pwmOut(output);
+  }     
+}
+
+void maxon_down_half(){
+  setpoint=6;                                                                                             //FIX
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
