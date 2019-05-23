@@ -62,7 +62,7 @@ if __name__ == '__main__':
 					pos_hint={'x':0.20,'y':0.1},
 					size_hint=(0.6, 0.8))
 			main_window.add_widget(popup)
-			return main_window
+			# return main_window
 		def get_data(self):
 			accel_x.points_list_t[0].append((self.i,-4))
 			accel_y.points_list_t[0].append((self.i,-4))

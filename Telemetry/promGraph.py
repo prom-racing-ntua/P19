@@ -12,6 +12,9 @@ from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.spinner import Spinner
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import style
 
 margin = [5,10,15,20]
 RGB = [[1, 0, 0, 1],[0, 1, 0, 1],[0, 0, 1, 1],[1, 0, 1, 1],[0, 1, 1, 1]]
