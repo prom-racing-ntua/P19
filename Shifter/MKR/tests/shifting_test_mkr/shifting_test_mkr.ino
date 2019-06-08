@@ -53,7 +53,7 @@
 #define total_gears 5
 
 //pid variables
-double kp = 27 , ki = 2.5 , kd = 0.01;             // modify for optimal performance        //FIX
+double kp = 40 , ki = 2.3 , kd = 0.01;             // modify for optimal performance        //FIX
 double input = 0, output = 0, setpoint = 0;
 volatile long encoderPos = 0;
 
@@ -102,7 +102,7 @@ void setup() {
   attachInterrupt(5 ,count1,FALLING);                  // encoder interrupt
   //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   myPID.SetMode(AUTOMATIC);
-  myPID.SetSampleTime(1);
+  myPID.SetSampleTime(10);      //fixxxxxx************************
   myPID.SetOutputLimits(-255, 255);
   setpoint =0;                                      // modify to fit motor and encoder characteristics
   
@@ -129,7 +129,7 @@ void loop() {
            previous=millis();
            previous +=interval;
       }
-      if(shift_flag==1 && (digitalRead(shift_down)==LOW)) {
+      if(shift_flag==1 && (digitalRead(shift_down)==LOW) && gear!=0) {
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);

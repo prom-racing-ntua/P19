@@ -93,7 +93,7 @@ void setup() {
   attachInterrupt(1 ,count1,FALLING);                  // encoder interrupt
   TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   myPID.SetMode(AUTOMATIC);
-  myPID.SetSampleTime(10);
+  myPID.SetSampleTime(10);          //fixxxxxxxxxx*****************************
   myPID.SetOutputLimits(-255, 255);
   setpoint =0;                                      // modify to fit motor and encoder characteristics
   
@@ -121,7 +121,7 @@ void loop() {
            previous=millis();
            previous +=interval;
       }
-      if((digitalRead(shift_down)==LOW) && shift_flag==1&& gear!=0) {
+      if(shift_flag==1 && (digitalRead(shift_down)==LOW) && gear!=0) {
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
