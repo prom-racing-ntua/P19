@@ -21,8 +21,8 @@ right_column = FloatLayout()
 indication = Sectors(
     sectorname = " ",
     #customcolor = [1,1,1,0],
-    pos_hint = {'x':0.62 , 'y':0.865},
-    size_hint = (0.07,0.15)
+    pos_hint = {'x':0.62 , 'y':0.89},
+    size_hint = (0.07,0.13)
 )
 indication.currentlabel.text = 'this'
 indication.previouslabel.text = 'last'
@@ -43,16 +43,16 @@ right_column.add_widget(indication)
 
 laps = Sectors(
    sectorname = "Lap",
-   pos_hint = {'x':0.69,'y':0.865},
-   size_hint = (0.04,0.15)
+   pos_hint = {'x':0.69,'y':0.89},
+   size_hint = (0.03,0.13)
 )
 right_column.add_widget(laps)
 
 sector1 = Sectors(
 	sectorname = "Sector 1",
 	customcolor = [0.35,0.35,0.35,1],
-	pos_hint = {'x':0.73,'y':0.865},
-	size_hint = (0.09,0.15)
+	pos_hint = {'x':0.72,'y':0.89},
+	size_hint = (0.07,0.13)
 
 )
 right_column.add_widget(sector1)
@@ -60,18 +60,26 @@ right_column.add_widget(sector1)
 sector2 = Sectors (
     sectorname = "Sector 2",
     customcolor = [0.55,0.35,0.35,1],
-    pos_hint = {'x':0.82,'y':0.865},
-    size_hint=(0.09,0.15)
+    pos_hint = {'x':0.79,'y':0.89},
+    size_hint=(0.07,0.13)
 )
 right_column.add_widget(sector2)
 
 sector3 = Sectors(
     sectorname = "Sector 3",
     customcolor = [0.35 , 0.55 , 0.35 , 1],
-    pos_hint = {'x':0.91,'y':0.865},
-    size_hint=(0.09,0.15)
+    pos_hint = {'x':0.86,'y':0.89},
+    size_hint=(0.07,0.13)
 )
 right_column.add_widget(sector3)
+
+laptime = Sectors(
+    sectorname = "Laptime",
+    customcolor = [0.35,0.55,0.35,1],
+    pos_hint = {'x':0.93,'y':0.89},
+    size_hint=(0.07,0.13)
+)
+right_column.add_widget(laptime)
 
 progress1 = ProgressBa (
     lowclr1 = [1,1,0,0.5],
