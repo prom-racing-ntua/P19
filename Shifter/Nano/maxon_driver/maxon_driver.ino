@@ -1,6 +1,6 @@
 #include <PID_v1.h>
 //        (SCK)-D13   D12-(MISO)
-//        3.3V  D11-(MOSI)(PWM)
+//        3.3V  D11- (MOSI)(PWM)
 //              REF   D10-(SS)(PWM)
 //              A0    D9              :HALFDOWN
 //              A1    D8              :HALFUP
