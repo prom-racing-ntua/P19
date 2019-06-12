@@ -29,8 +29,8 @@
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 300   //Fix   
-#define pot_clutch_MAX 900   //Fix
+#define pot_clutch_MIN 200   //Fix   
+#define pot_clutch_MAX 873   //Fix
 #define pot_error 15
 
 //delays
@@ -42,13 +42,13 @@
 #define CHB         6      // Quadrature encoder B pin
 #define M1          0      //maxon pwm output 1
 #define M2          1      //maxon pwm output 2
-#define led_up      A5     //shift up indication
-#define led_down    A6     //shift down indication
-#define led_clutch  A1     //clutch indication
+//#define led_up      A5     //shift up indication
+//#define led_down    A6     //shift down indication
+//#define led_clutch  A1     //clutch indication
 #define sparkcut    4      //Gearcut pin at ECU
 #define shift_up    A3      //steering wheel right pad(shift up)
 #define shift_down  A4      //steering wheel left pad(shift down)
-#define neutral     14
+//#define neutral     14
 #define clutch_pin  2      //servo signal
 #define total_gears 5
 
@@ -59,7 +59,7 @@ volatile long encoderPos = 0;
 
 //general variables
 unsigned long current, previous, interval=30;
-unsigned long current_m, previous_m, interval_m=300;
+unsigned long current_m, previous_m, interval_m=90;
 uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
 
@@ -78,24 +78,21 @@ int tps_min=5, tps_max=90;                          // pososto petaloudas !!!   
 uint8_t launch_cancel=0;
 
 const int SPI_CS_PIN = 3;
-MCP_CAN CAN(SPI_CS_PIN);
+//MCP_CAN CAN(SPI_CS_PIN);
 PID myPID(&input, &output, &setpoint, kp, ki, kd, DIRECT);  // if motor will only run at full speed try 'REVERSE' instead of 'DIRECT'
 Servo clutch;
 
 void setup() {
   Serial.begin(115200);
-  CAN.begin(CAN_1000KBPS);                           // 1Mbps
+//  CAN.begin(CAN_1000KBPS);                           // 1Mbps
   pinMode(shift_down, INPUT_PULLUP);
   pinMode(shift_up, INPUT_PULLUP);
-  pinMode(neutral, INPUT_PULLUP);
   pinMode(CHA, INPUT_PULLUP);     
   pinMode(CHB, INPUT_PULLUP); 
   pinMode(sparkcut, OUTPUT);
   pinMode(M1, OUTPUT);
   pinMode(M2, OUTPUT);
-  pinMode(led_up, OUTPUT);
-  pinMode(led_down, OUTPUT);
-  pinMode(led_clutch, OUTPUT);
+
   
   clutch.attach(clutch_pin, 1000, 1600);               // 1000->1600ms = 0->60 degrees      FIX
   clutch.writeMicroseconds(1000);                      // initialize servo's position               FIX
@@ -111,11 +108,18 @@ void setup() {
 void loop() {
   current=millis();
   pot_pos = analogRead(A2);  //steering wheel clutch potentiometer
+    Serial.print("Gear: ");
+  Serial.print(gear);
+  Serial.print("   pot_position: ");
+  Serial.print(pot_pos);
+  Serial.print("  clutch_pos:  ");
+  Serial.println(clutch_pos);
+  
   
   //check if the clutch is pressed
-  if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
-     //clutch.writeMicroseconds(1480);                                                                                                         //why?
-     //digitalWrite(led_clutch, LOW);
+  if(pot_pos<(pot_clutch_MIN+pot_error)) {   //the clutch is not pressed
+     clutch.writeMicroseconds(1480);                                                                                                         //why?
+//     digitalWrite(led_clutch, LOW);
      if((shift_flag==1) && gear!=0 && (digitalRead(shift_up)==LOW)) { //up shift
            gear++;
            if(gear <= total_gears)  {    //check if we passed the total number of gears
@@ -133,11 +137,9 @@ void loop() {
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
-             digitalWrite(led_clutch, HIGH);
              delay(clutch_t);
              maxon_down();
              clutch.writeMicroseconds(1480);
-             digitalWrite(led_clutch, LOW);
                    
           }
           else {gear=1;}
@@ -147,10 +149,9 @@ void loop() {
         }
   
   }
-  else if(pot_pos>pot_clutch_MIN && pot_pos<pot_clutch_MAX){ //the clutch is pressed
-    digitalWrite(led_clutch, HIGH);
+  else if(pot_pos>pot_clutch_MIN && pot_pos<pot_clutch_MAX+pot_error){ //the clutch is pressed
     //move servo
-    clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 0, 1023);
+    clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 1600, 1000);
     clutch.writeMicroseconds(clutch_pos);
    
     if((digitalRead(shift_up)==LOW) && shift_flag==1){      
@@ -158,7 +159,7 @@ void loop() {
         if(gear==0) {
             clutch.writeMicroseconds(1200);
             delay(clutch_t);
-            maxon_down();
+            maxon_down_half();
             clutch.writeMicroseconds(clutch_pos);
         }
         else if(gear <= total_gears)  {
@@ -192,27 +193,27 @@ void loop() {
         previous +=interval;
     }
    
-   if(digitalRead(neutral)==LOW && neutral_prev==0) { 
-      clutch.writeMicroseconds(1200);
-      delay(clutch_t);
-      for(int i=0; i<gear-2; i++) {                  //shift down all the way to second gear
-          maxon_down();
-          delay(100);                             //borei kai ligotero
-      }
-      maxon_down_half();                           //shift down half  to neutral
-      clutch.writeMicroseconds(clutch_pos);
-      gear=0;
-      neutral_prev=1;
-   }
+//   if(digitalRead(neutral)==LOW && neutral_prev==0) { 
+//      clutch.writeMicroseconds(1200);
+//      delay(clutch_t);
+//      for(int i=0; i<gear-2; i++) {                  //shift down all the way to second gear
+//          maxon_down();
+//          delay(100);                             //borei kai ligotero
+//      }
+//      maxon_down_half();                           //shift down half  to neutral
+//      clutch.writeMicroseconds(clutch_pos);
+//      gear=0;
+//      neutral_prev=1;
+//   }
   }  
   if(current>previous){   //Debouncing method
     if(digitalRead(shift_up)==HIGH  && digitalRead(shift_down)==HIGH){ //means we have released both shifting pads
        shift_flag=1;
     }
   }
-  if(digitalRead(neutral)==HIGH) {
-    neutral_prev=0;
-  }
+//  if(digitalRead(neutral)==HIGH) {
+//    neutral_prev=0;
+//  }
 }
 
 
@@ -241,6 +242,8 @@ void maxon_up(){
     myPID.Compute();                                    // calculate new output
     pwmOut(output);
   }
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);
   setpoint=0;
   previous_m=millis();
   previous_m+=interval_m;
@@ -251,6 +254,9 @@ void maxon_up(){
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
+      output=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);
 }     
 
 void maxon_down(){
@@ -265,6 +271,8 @@ void maxon_down(){
     pwmOut(output);
   }
   setpoint=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -273,7 +281,10 @@ void maxon_down(){
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }     
+  }
+      output=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);     
 }
 
 void maxon_up_half(){
@@ -288,6 +299,8 @@ void maxon_up_half(){
     pwmOut(output);
   }
   setpoint=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -296,7 +309,10 @@ void maxon_up_half(){
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }     
+  }
+      output=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);     
 }
 void maxon_down_half(){
   setpoint=6;                                                                                             //FIX
@@ -310,6 +326,8 @@ void maxon_down_half(){
     pwmOut(output);
   }
   setpoint=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -318,8 +336,13 @@ void maxon_down_half(){
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }     
+  }
+      output=0;
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);     
 }
+
+
 void pwmOut(int out) {                                // to H-Bridge board
  if (out > 0) {
    analogWrite(M1, out);                             // drive motor CW
