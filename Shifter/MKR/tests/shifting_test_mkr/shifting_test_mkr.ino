@@ -28,8 +28,8 @@
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 0   //Fix   
-#define pot_clutch_MAX 873   //Fix
+#define pot_clutch_MIN 160   //Fix   
+#define pot_clutch_MAX 610   //Fix
 #define pot_error 15
 
 //delays
@@ -155,7 +155,7 @@ void loop() {
    
     if((digitalRead(shift_up)==LOW) && shift_flag==1){      
         gear++;
-        if(gear==0) {
+        if(gear==1) {
             clutch.writeMicroseconds(1200);
             delay(clutch_t);
               digitalWrite(HALFDOWN, LOW);
@@ -191,7 +191,8 @@ void loop() {
            delay(clutch_t);
               digitalWrite(HALFUP, LOW);
               delay(HALF);
-              digitalWrite(HALFUP, HIGH);           clutch.writeMicroseconds(clutch_pos);
+              digitalWrite(HALFUP, HIGH);          
+              clutch.writeMicroseconds(clutch_pos);
         }
         else{gear=0;}
         shift_flag=0;

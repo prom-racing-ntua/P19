@@ -44,7 +44,7 @@ void setup() {
   pinMode(DOWN, INPUT_PULLUP);
   pinMode(HALFUP, INPUT_PULLUP);
   pinMode(HALFDOWN, INPUT_PULLUP);
-  attachInterrupt(1 ,count1,FALLING); 
+  attachInterrupt(0 ,count1,FALLING); 
   myPID.SetMode(AUTOMATIC);
   myPID.SetSampleTime(10);          //fixxxxxxxxxx*****************************
   myPID.SetOutputLimits(-255, 255);
