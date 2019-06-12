@@ -40,24 +40,29 @@ void setup() {
   pinMode(CHB, INPUT_PULLUP); 
   pinMode(M1, OUTPUT);
   pinMode(M2, OUTPUT);
+  pinMode(UP, INPUT_PULLUP);
+  pinMode(DOWN, INPUT_PULLUP);
+  pinMode(HALFUP, INPUT_PULLUP);
+  pinMode(HALFDOWN, INPUT_PULLUP);
   attachInterrupt(1 ,count1,FALLING); 
   myPID.SetMode(AUTOMATIC);
   myPID.SetSampleTime(10);          //fixxxxxxxxxx*****************************
   myPID.SetOutputLimits(-255, 255);
   setpoint =0;                                      // modify to fit motor and encoder characteristics
-  
+  Serial.begin(115200);
+   //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  delay(2000);
 }
 
 void loop() {
- if (digitalRead(UP)){Serial.println("UP");maxon_up();}
- if (digitalRead(DOWN)){Serial.println("DOWN");maxon_down();}
- if (digitalRead(HALFUP)){Serial.println("HALFUP");maxon_up_half();}
- if (digitalRead(HALFDOWN)){Serial.println("HALFDOWN");maxon_down_half();}
+ if (!digitalRead(UP)){delay(1);Serial.println("UP"); maxon_up();}
+ if (!digitalRead(DOWN)){delay(1);Serial.println("DOWN");maxon_down();}
+ if (!digitalRead(HALFUP)){delay(1);Serial.println("HALFUP");maxon_up_half();}
+ if (!digitalRead(HALFDOWN)){delay(1);Serial.println("HALFDOWN");maxon_down_half();}
 }
 
-
 void count1() {
- if (digitalRead(CHA)==LOW)
+ if (digitalRead(CHB)==HIGH)
     encoderPos--;
  else
     encoderPos++;
@@ -85,8 +90,8 @@ void maxon_up(){
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
-//  analogWrite(M1, 0);
-//  analogWrite(M2, 0);
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);
 }     
 
 void maxon_down(){
@@ -110,8 +115,8 @@ void maxon_down(){
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
-//  analogWrite(M1, 0);
-//  analogWrite(M2, 0);     
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);     
 }
 
 void maxon_up_half(){
@@ -135,8 +140,8 @@ void maxon_up_half(){
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
-//  analogWrite(M1, 0);
-//  analogWrite(M2, 0);     
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);     
 }
 void maxon_down_half(){
   setpoint=6;                                                                                             //FIX
@@ -159,8 +164,8 @@ void maxon_down_half(){
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
-//  analogWrite(M1, 0);
-//  analogWrite(M2, 0);     
+  analogWrite(M1, 0);
+  analogWrite(M2, 0);     
 }
 
 
