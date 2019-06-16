@@ -28,8 +28,8 @@ roll_pitch = PromGraph(
 				ylog=False,
 				x_grid=True,
 				y_grid=True,
-				ymin=-2,
-				ymax=2,
+				ymin=-1.5,
+				ymax=1.5,
 				pos_hint={'x':0,'y':0},
 				size_hint=(0.3,0.3)
 				)
@@ -140,6 +140,6 @@ left_column.add_widget(errorsector)
 ######### TIRE TEMP #################
 testtemp = TiretempLbl(
 	pos_hint={'x':0.01,'y':0.62},
-	size_hint = (0.27,0.20)
+	size_hint = (0.13,0.20)
 )
 left_column.add_widget(testtemp)
