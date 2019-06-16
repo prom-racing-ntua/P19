@@ -33,11 +33,11 @@ MCP_CAN CAN(SPI_CS_PIN);
 
 void setup() {
   Serial.begin(115200);
-  CAN.begin(CAN_1000KBPS);                           // 1Mbps
+  CAN.begin(CAN_500KBPS);                           // 1Mbps
  attachInterrupt(7, canReads, FALLING);               // CAN BUS interrupt
   
-  CAN.init_Mask(0, 0, 0x3ff);                          // there are 2 mask in mcp2515, you need to set both of them
-  CAN.init_Mask(1, 0, 0x3ff);                          // !!logika thelei allagi to mask!!
+  CAN.init_Mask(0, 0, 0x000);                          // there are 2 mask in mcp2515, you need to set both of them
+  CAN.init_Mask(1, 0, 0xfff);                          // !!logika thelei allagi to mask!!
     
   CAN.init_Filt(0, 0, 0x5fc);                          // rear right hall
   CAN.init_Filt(1, 0, 0x5fd);                          // rear left hall
@@ -72,13 +72,15 @@ void loop() {
   Serial.print(fr);
   Serial.print(" - FrontLeftHall: ");
   Serial.println(fl);
+  delay(500);
   
 }
 
 
 void canReads() {
+  //Serial.println("interrupm");
   CAN.readMsgBuf(&len, buf);
-  if(CAN.getCanId()==0x5fc) {       //rear right module
+  if(CAN.getCanId()==1532) {       //rear right module
     rr=uint8_t(buf[0]);
   }
   else if(CAN.getCanId()==0x5fd) {  //rear left module
@@ -96,19 +98,26 @@ void canReads() {
     gear=uint8_t(buf[0]);
   }
 
-  if(CAN.getCanId()==0x666) { //steering wheel
-    if(buf[6]&0b00000001)
+  else if(CAN.getCanId()==0x666) { //steering wheel
+    if(buf[6]&0b00000001) {
       launch=1;
-    else
+    }
+    else{
+      launch=0;
       launch_prev=0;
-    if(buf[6]&0b00000010)
+    }
+    if(buf[6]&0b00000010) {
       autoshift=1;
-    else
+    }
+    else {
       autoshift=0;
-    if(buf[6]&0b00000100)
+    }
+    if(buf[6]&0b00000100){
       neutral=1;
-    else
-     neutral=0;                                                      //check
-     neutral_prev=0;
+    }
+    else {
+      neutral=0;                                                      //check
+      neutral_prev=0;
+    } 
    }
 }

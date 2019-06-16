@@ -32,8 +32,8 @@
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 300   //Fix   
-#define pot_clutch_MAX 900   //Fix
+#define pot_clutch_MIN 92   //Fix   
+#define pot_clutch_MAX 270   //Fix
 #define pot_error 15
 
 //delays
@@ -62,7 +62,7 @@ volatile long encoderPos = 0;
 
 //general variables
 unsigned long current, previous, interval=30;
-unsigned long current_m, previous_m, interval_m=150;
+unsigned long current_m, previous_m, interval_m=200;
 uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
 
@@ -91,22 +91,29 @@ void setup() {
   clutch.attach(servo_pin, 1000, 1600);               // 1000->1600ms = 0->60 degrees      FIX
   clutch.writeMicroseconds(1000);                      // initialize servo's position               FIX
   attachInterrupt(1 ,count1,FALLING);                  // encoder interrupt
-  TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   myPID.SetMode(AUTOMATIC);
-  myPID.SetSampleTime(10);
+  myPID.SetSampleTime(10);          //fixxxxxxxxxx*****************************
   myPID.SetOutputLimits(-255, 255);
   setpoint =0;                                      // modify to fit motor and encoder characteristics
   
 }
 
 void loop() {
+
   current=millis();
   pot_pos = analogRead(A0);  //steering wheel clutch potentiometer
-              Serial.print("Gear: ");
-              Serial.println(gear);  
+  
+  Serial.print("Gear: ");
+  Serial.print(gear);
+  Serial.print("   pot_position: ");
+  Serial.print(pot_pos);
+  Serial.print("  clutch_pos:  ");
+  Serial.println(clutch_pos);
+  
   //check if the clutch is pressed
-  if(pot_pos<(pot_clutch_MIN-pot_error)) {   //the clutch is not pressed
-     //clutch.writeMicroseconds(1480);                                                                                                         //why?
+  if(pot_pos<(pot_clutch_MIN+pot_error)) {   //the clutch is not pressed
+     clutch.writeMicroseconds(1480);                                                                                                         //why?
      //digitalWrite(led_clutch, LOW);
      if((shift_flag==1) && (digitalRead(shift_up)==LOW)&& gear!=0) { //up shift
            gear++;
@@ -121,7 +128,7 @@ void loop() {
            previous=millis();
            previous +=interval;
       }
-      if((digitalRead(shift_down)==LOW) && shift_flag==1&& gear!=0) {
+      if(shift_flag==1 && (digitalRead(shift_down)==LOW) && gear!=0) {
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
@@ -142,7 +149,7 @@ void loop() {
   else if(pot_pos>pot_clutch_MIN && pot_pos<pot_clutch_MAX){ //the clutch is pressed
     //digitalWrite(led_clutch, HIGH);
     //move servo
-    clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 0, 1023);
+    clutch_pos = supermap(pot_pos, pot_clutch_MIN, pot_clutch_MAX, 1600, 1000);
     clutch.writeMicroseconds(clutch_pos);
    
     if((digitalRead(shift_up)==LOW) && shift_flag==1){      
@@ -150,7 +157,7 @@ void loop() {
         if(gear==0) {
             clutch.writeMicroseconds(1200);
             delay(clutch_t);
-            maxon_down();
+            maxon_down_half();
             clutch.writeMicroseconds(clutch_pos);
         }
         else if(gear <= total_gears)  {
@@ -219,9 +226,9 @@ int supermap(double pot_pos,double pot_clutch_min,double pot_clutch_max,double s
 
 void count1() {
  if (digitalRead(CHA)==LOW)
-    encoderPos++;
- else
     encoderPos--;
+ else
+    encoderPos++;
 }
 
 void maxon_up(){
@@ -245,6 +252,8 @@ void maxon_up(){
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
   }
+//  analogWrite(M1, 0);
+//  analogWrite(M2, 0);
 }     
 
 void maxon_down(){
@@ -267,7 +276,9 @@ void maxon_down(){
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }     
+  }
+//  analogWrite(M1, 0);
+//  analogWrite(M2, 0);     
 }
 
 void maxon_up_half(){
@@ -290,7 +301,9 @@ void maxon_up_half(){
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }     
+  }
+//  analogWrite(M1, 0);
+//  analogWrite(M2, 0);     
 }
 void maxon_down_half(){
   setpoint=6;                                                                                             //FIX
@@ -312,8 +325,12 @@ void maxon_down_half(){
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
-  }     
+  }
+//  analogWrite(M1, 0);
+//  analogWrite(M2, 0);     
 }
+
+
 void pwmOut(int out) {                                // to H-Bridge board
  if (out > 0) {
    analogWrite(M1, out);                             // drive motor CW

@@ -142,7 +142,7 @@ void loop() {
            previous=millis();
            previous +=interval;
       }
-      if(shift_flag==1 && ((digitalRead(shift_down)==LOW)|| ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear]))))) {
+      if(shift_flag==1 && gear!=0 && ((digitalRead(shift_down)==LOW)|| ((autoshift==1 && rpm<n2[gear] && tps<=tps_min) && (rpm<=n_brake[gear] || (tps>=tps_max && rpm<=n_accel[gear]))))) {
           gear--;
           if(gear>=1) {    
              clutch.writeMicroseconds(1200);
@@ -276,7 +276,7 @@ void canReads() {
     gear=uint8_t(buf[0]);
   }
 
-  if(CAN.getCanId()==0x666) { //steering wheel
+  else if(CAN.getCanId()==0x666) { //steering wheel
     if(buf[6]&0b00000001)
       launch=1;
     else
