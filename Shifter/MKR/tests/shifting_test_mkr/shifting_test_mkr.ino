@@ -28,7 +28,7 @@
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 160   //Fix   
+#define pot_clutch_MIN -15   //Fix   
 #define pot_clutch_MAX 610   //Fix
 #define pot_error 15
 
@@ -46,7 +46,6 @@
 #define clutch_pin  2      //servo signal
 #define total_gears 5
 
-#define EN          11
 #define UP          0
 #define DOWN        1
 #define HALFUP      10
@@ -82,7 +81,6 @@ void setup() {
   pinMode(shift_down, INPUT_PULLUP);
   pinMode(shift_up, INPUT_PULLUP);
   pinMode(sparkcut, OUTPUT);
-  pinMode(EN, OUTPUT);
   pinMode(UP, OUTPUT);
   pinMode(DOWN, OUTPUT);
   pinMode(HALFUP, OUTPUT);
@@ -95,7 +93,6 @@ void setup() {
   digitalWrite(DOWN, HIGH);
    digitalWrite(HALFUP, HIGH);
     digitalWrite(HALFDOWN, HIGH);
-    digitalWrite(EN, HIGH);
 
   
 }

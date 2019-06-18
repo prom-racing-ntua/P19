@@ -33,10 +33,10 @@ void loop() {
   Serial.print(encoderPos);                      // monitor motor position
   myPID.Compute();                                    // calculate new output
   pwmOut(output);
-//  Serial.print("  -  ");
-//  Serial.print(output);// drive L298N H-Bridge module
-//  Serial.print("  -  ");
-//  Serial.println(setpoint);// drive L298N H-Bridge module
+  Serial.print(",");
+  Serial.print(output);// drive L298N H-Bridge module
+  Serial.print(",");
+  Serial.println(setpoint);// drive L298N H-Bridge module
   // if((output<=1.5 )&& (output>=-1.7)) {
   //  setpoint=0;
   // }
