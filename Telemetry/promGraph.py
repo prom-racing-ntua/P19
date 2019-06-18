@@ -30,6 +30,7 @@ class PromGraph(Graph,Widget,HoverBehavior):
 	labs = ListProperty([])
 	ylabs = ListProperty([])
 	marg = NumericProperty(margin[0])
+	scale = NumericProperty(0.)
 
 	def __init__(self, **kwargs):
 		super(PromGraph, self).__init__(**kwargs)

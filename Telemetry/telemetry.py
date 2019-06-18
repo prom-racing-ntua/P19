@@ -24,6 +24,7 @@ import time,math,random,queue,numpy
 from collections import deque
 from datetime import *
 from landingForm import LandingForm
+from popupwidget import PopupWidget
 
 
 from test import TestWidget
@@ -31,6 +32,15 @@ from sectors import Sectors
 from center import *
 from left import *
 from right import *
+import serial
+
+# ser = serial.Serial()
+# print(ser.name)
+
+streamline = list()
+for i in range(65):
+	streamline.append(0)
+
 def convert(clat,clon):    ##convert gps coords
 	# 3804.1712,02348.9058
 	lat=int(clat[0:2])+round(float(clat[2:9])/60,6)
@@ -58,51 +68,60 @@ if __name__ == '__main__':
 
 			popup = Popup(
 					title='Telemetry Setup',
-					content=Label(text="OPA"),
+					content = PopupWidget(),
+					confirm = Button(text = 'confirm',pos_hint={'x':0.5,'y':0.15}),
 					pos_hint={'x':0.20,'y':0.1},
 					size_hint=(0.6, 0.8))
-			# main_window.add_widget(popup)
+			confirm.bind(on_press= popup.dismiss)
+			main_window.add_widget(popup)
+			print (popup.content.children)`
+			++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	--`
 			Clock.schedule_interval(lambda *t: self.get_data(), 0.01)
 			return main_window
 		def get_data(self):
-			accel_x.points_list_t[0].append((self.i,-4))
-			accel_y.points_list_t[0].append((self.i,-4))
+			global streamline
+			# if ser.in_waiting:
+			# 	mydata = str(ser.readline()).split("'")[1].split('\\')[0].split(',')
+			# 	streamline = [int(x) for x in mydata]
 
-			brake_tps_steering.points_list_t[0].append((self.i,-2))
-			brake_tps_steering.points_list_t[1].append((self.i,-2))
-			brake_tps_steering.points_list_t[2].append((self.i,-2))
+			accel_x.points_list_t[0].append((streamline[0],streamline[10]))
+			accel_y.points_list_t[0].append((streamline[0],streamline[11]))
 
-			gear_rpm_speed.points_list_t[0].append((self.i,-1))
-			gear_rpm_speed.points_list_t[1].append((self.i,-1))
-			gear_rpm_speed.points_list_t[2].append((self.i,-1))
+			brake_tps_steering.points_list_t[0].append((streamline[0],(streamline[41]-streamline[40])/2)) ##### metatroph### check
+			brake_tps_steering.points_list_t[1].append((streamline[0],streamline[16]))
+			brake_tps_steering.points_list_t[2].append((streamline[0],streamline[63]))# metatroph
 
-			roll_pitch.points_list_t[0].append((self.i,-4))
-			roll_pitch.points_list_t[1].append((self.i,-4))
-			roll_pitch.points_list_t[2].append((self.i,-4))
+			gear_rpm_speed.points_list_t[0].append((streamline[0],streamline[15]))#gear
+			gear_rpm_speed.points_list_t[1].append((streamline[0],streamline[14]))#rpm
+			gear_rpm_speed.points_list_t[2].append((streamline[0],streamline[9]))#GPSspeed
 
-			shock_travel.points_list_t[0].append((self.i,-32))
-			shock_travel.points_list_t[1].append((self.i,-32))
-			shock_travel.points_list_t[2].append((self.i,-32))
-			shock_travel.points_list_t[3].append((self.i,-32))
+			roll_pitch.points_list_t[0].append((streamline[0],))
+			roll_pitch.points_list_t[1].append((streamline[0],-4))
+			roll_pitch.points_list_t[2].append((streamline[0],-4))
 
-			accel_x.points_list_m[0].append((self.i,1.5*math.sin(math.pi*self.i)))
-			accel_y.points_list_m[0].append((self.i,1.5*math.sin(2*math.pi*self.i)/2))
-			brake_tps_steering.points_list_m[0].append((self.i,1.5*math.sin(2*math.pi*self.i)))
-			brake_tps_steering.points_list_m[1].append((self.i,1.5*2*math.sin(2*math.pi*self.i)))
-			brake_tps_steering.points_list_m[2].append((self.i,1.5*20*math.sin(2*math.pi*self.i)))
+			shock_travel.points_list_t[0].append((streamline[0],-32))
+			shock_travel.points_list_t[1].append((streamline[0],-32))
+			shock_travel.points_list_t[2].append((streamline[0],-32))
+			shock_travel.points_list_t[3].append((streamline[0],-32))
 
-			gear_rpm_speed.points_list_m[0].append((self.i,1.5*int(abs(5*math.sin(math.pi*self.i)))))
-			gear_rpm_speed.points_list_m[1].append((self.i,1.5*math.sin(math.pi*self.i)))
-			gear_rpm_speed.points_list_m[2].append((self.i,1.5*2*math.sin(math.pi*self.i)))
+			accel_x.points_list_m[0].append((streamline[3],streamline[10]))
+			accel_y.points_list_m[0].append((streamline[3],streamline[11]))
+			brake_tps_steering.points_list_m[0].append((streamline[3],(streamline[41]-streamline[40])/2))
+			brake_tps_steering.points_list_m[1].append((streamline[3],streamline[16]))
+			brake_tps_steering.points_list_m[2].append((streamline[3],streamline[63]))
 
-			roll_pitch.points_list_m[0].append((self.i,1.5*0.5*math.sin(math.pi*self.i)))
-			roll_pitch.points_list_m[1].append((self.i,1.5*math.sin(math.pi*self.i)))
-			roll_pitch.points_list_m[2].append((self.i,1.5*math.sin(2*math.pi*self.i)))
+			gear_rpm_speed.points_list_m[0].append((streamline[3],streamline[15]))
+			gear_rpm_speed.points_list_m[1].append((streamline[3],streamline[14]))
+			gear_rpm_speed.points_list_m[2].append((streamline[3],streamline[9]))
 
-			shock_travel.points_list_m[0].append((self.i,1.5*12*math.sin(math.pi*self.i)))
-			shock_travel.points_list_m[1].append((self.i,1.5*12+4*math.sin(math.pi*self.i)))
-			shock_travel.points_list_m[2].append((self.i,1.5*20*math.sin(math.pi*self.i)))
-			shock_travel.points_list_m[3].append((self.i,1.5*40*math.sin(math.pi*self.i)))
+			roll_pitch.points_list_m[0].append((streamline[3],streamline[23]))
+			roll_pitch.points_list_m[1].append((streamline[3],streamline[23]))
+			roll_pitch.points_list_m[2].append((streamline[3],streamline[23]))
+
+			shock_travel.points_list_m[0].append((streamline[3],streamline[23]))
+			shock_travel.points_list_m[1].append((streamline[3],streamline[23]))
+			shock_travel.points_list_m[2].append((streamline[3],streamline[23]))
+			shock_travel.points_list_m[3].append((streamline[3],streamline[23]))
 
 			accel_x.change = accel_y.change = brake_tps_steering.change = gear_rpm_speed.change = roll_pitch.change = shock_travel.change = True
 			self.i+=0.016
@@ -110,26 +129,64 @@ if __name__ == '__main__':
 			j+=0.5
 			track_map.raw_coords=temp[int(j)%len(temp)]
 			##create each sector
-			sector1.currenttime = str(self.i)
+			sector1.currenttime = timesectors(streamline[5],1)
 			#sector1.lap = int(self.i)
-			sector2.currenttime = str(self.i/2)
+			sector2.currenttime = timesectors(streamline[5],2)
 			#sector2.lap = int (self.i)
-			sector3.currenttime = str(self.i/10)
+			sector3.currenttime = timesectors(streamline[5],3)
 			#sector3.lap = int(self.i)
-			progress1.progresslvl = (1+math.sin(4*math.pi*self.i))*5
+			progress1.progresslvl = streamline[14]  #(1+math.sin(4*math.pi*self.i))*5
 			# utclbl1.utctime = accel_x.points_list_t
 			# utclbl1.utcdate = accel_y.points_list_t
-			gearlbl.currentgear = 4
-			speedlbl.currentspeed = 120
+			gearlbl.currentgear = streamline[15]
+			speedlbl.currentspeed = streamline[9]
 			# frontleft.temptsur = self.i
-			# tpsgauge.tpsvalue = self.i*500
-			# brakegauge.brakevalue = self.i*500
-			testtemp.temps = [10,20,30,40,45,55,60,65,70,75,80,85,90,95,96,98]
-			gg_diagram.value = [1,1]
+			tpsgauge.tpsvalue = streamline[16]
+			brakegauge.brakevalue = (streamline[41]-streamline[40])/2
+			testtemp.temps = [streamline[47],streamline[48],streamline[49],streamline[50],streamline[51],streamline[52],streamline[53],streamline[54],streamline[55],streamline[56],streamline[57],streamline[58],streamline[59],streamline[60],streamline[61],streamline[62]]
+			gg_diagram.value = [streamline[1],streamline[2]]
+			bbprogress.bbvalue = streamline[42]
+			coolantsector.sectorvalue = streamline[13]
+			oilprsector.sectorvalue = streamline[20]
+			batterysector.sectorvalue = streamline[21]
+			errorsector.sectorvalue = errorfunc(streamline[17])
+
+		##### creates the error message #
+		### errorslistc has the errors #
+		##### argument error is 11 bits #
+		### each one represents an error from the errorslist #
+		##### errors may be more than one #
+		### errors return through errormessage #
+		def errorfunc(self,error):
+			errorslist = [11]
+			errormessage = [11]
+			for i,x in enumerate(error):
+				if self.error[i] == '1':
+					errormessage.append(self.errorslist[i])
+			return errormessage
+
+		def roll_pitch(self,*args):
+			pass
+
+		##### sectors made like shit #
+		####laptime splitting in sectors #
+		##### sector must pass in the function as a str #
+		####is called whenever getdata() is called :( #
+		def timesectors(self,laptime,sector):
+			if self.sector == '1':
+				lapt1 = self.laptime
+				return lapt1
+			if self.sector == '2':
+				lapt2 = self.laptime-lapt1
+				return lapt2
+			if self.sector == '3':
+				lapt3 = self.laptime-(lapt2+lapt1)
+				return lapt3
+
+
 	try:
 		TelemetryApp().run()
 	except Exception as e:
 		# ser.close()
-		file.close()
 
 		raise e

@@ -66,8 +66,8 @@ class Sectors(Widget):
 
 
     def _changebest (self, *args):
-        self.currentlabel.text =self.currenttime[0:5]
+        self.currentlabel.text = self.currenttime[0:5]
         if float(self.currenttime) < float(self.best) :
             self.best = self.currenttime
-            self.previouslabel.text = self.last[0:5]
-        self.bestlabel.text = self.best[0:5]
+            self.bestlabel.text = self.best[0:5]
+        self.previouslabel.text = self.currenttime[0:5]
