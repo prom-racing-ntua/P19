@@ -20,10 +20,10 @@
 #define M1          6      //maxon pwm output 1
 #define M2          5      //maxon pwm output 2
 
-#define UP          4
-#define DOWN        7
-#define HALFUP      10
-#define HALFDOWN    8
+#define UP          7
+#define DOWN        4
+#define HALFUP      8
+#define HALFDOWN    10
 
 
 double kp = 35 , ki = 1.0 , kd = 0.01;             // modify for optimal performance        //FIX
@@ -32,8 +32,7 @@ volatile long encoderPos = 0;
 
 unsigned long current, previous, interval=30;
 unsigned long current_m, previous_m, interval_m=100;
-unsigned long current_mhd, previous_mhd, interval_mhd=100;
-unsigned long current_mh, previous_mh, interval_mh=400;
+unsigned long current_mhd, previous_mhd, interval_mhd=400;
 PID myPID(&input, &output, &setpoint, kp, ki, kd, DIRECT);  // if motor will only run at full speed try 'REVERSE' instead of 'DIRECT'
 
 void setup() {
@@ -73,7 +72,7 @@ void count1() {
 }
 
 
-void maxon_up(){
+void maxon_down(){
   setpoint=14;                                                                           //FIX
   previous_m=millis();
   previous_m+=interval_m;
@@ -102,7 +101,7 @@ void maxon_up(){
   analogWrite(M2, 0);
 }     
 
-void maxon_down(){
+void maxon_up(){
   setpoint=-14;                                                                              //FIX
   previous_m=millis();
   previous_m+=interval_m;
@@ -130,25 +129,25 @@ void maxon_down(){
   analogWrite(M2, 0);     
 }
 
-void maxon_up_half(){
+void maxon_down_half(){
   //kp=30;
-  setpoint=13;                                                                                             //FIX
-  previous_mh=millis();
-  previous_mh+=interval_mh;
+  setpoint=14;                                                                                             //FIX
+  previous_m=millis();
+  previous_m+=interval_m;
   while(1){
-    current_mh=millis();
-    if(current_mh>previous_mh) {break;}
+    current_m=millis();
+    if(current_m>previous_m) {break;}
     input = encoderPos ;                                // data from encoder
     myPID.Compute();                                    // calculate new output
     pwmOut(output);
        // ptr();
   }
   setpoint=0;
-  previous_mh=millis();
-  previous_mh+=interval_mh;
+  previous_m=millis();
+  previous_m+=interval_m;
   while(1){
-      current_mh=millis();
-      if(current_mh>previous_mh) {break;}
+      current_m=millis();
+      if(current_m>previous_m) {break;}
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);
@@ -159,8 +158,8 @@ void maxon_up_half(){
   analogWrite(M2, 0);  
  // kp=35;   
 }
-void maxon_down_half(){
-  setpoint=-13;                                                                                             //FIX
+void maxon_up_half(){
+  setpoint=-11;                                                                                             //FIX
   previous_mhd=millis();
   previous_mhd+=interval_mhd;
   while(1){
@@ -172,11 +171,11 @@ void maxon_down_half(){
       //  ptr();
   }
   setpoint=0;
-  previous_mh=millis();
-  previous_mh+=interval_mh;
+  previous_m=millis();
+  previous_m+=interval_m;
   while(1){
-      current_mh=millis();
-      if(current_mh>previous_mh) {break;}
+      current_m=millis();
+      if(current_m>previous_m) {break;}
       input = encoderPos ;                                // data from encoder
       myPID.Compute();                                    // calculate new output
       pwmOut(output);

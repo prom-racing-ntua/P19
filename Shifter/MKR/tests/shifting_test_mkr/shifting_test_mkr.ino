@@ -35,8 +35,8 @@
 //delays
 #define clutch_t    100    //wait the servo!
 #define spark_delay  10    //wait the ECU!
-#define FULL        150
-#define HALF        150
+#define FULL        100
+#define HALF        500
 
 //pins
 #define sparkcut    4      //Gearcut pin at ECU
@@ -176,7 +176,7 @@ void loop() {
             clutch.writeMicroseconds(1200);
             delay(clutch_t);
               digitalWrite(HALFDOWN, LOW);
-              delay(HALF);
+              delay(FULL);
               digitalWrite(HALFDOWN, HIGH);
               clutch.writeMicroseconds(clutch_pos);
         }
