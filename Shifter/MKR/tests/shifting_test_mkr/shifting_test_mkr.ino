@@ -8,10 +8,10 @@
  * SHIFT_UP     :Α3     RESET:
  *SHIFT_DOWN    :Α4        14:  (TX):  AUX1
  *       N1     :Α5        13:  (RX):  AUX2
- *       N2     :Α6        12:  (SCL)
- *       UP     :0         11:  (SDA)
- *     DOWN     :1         10:  (MISO): HALFUP
- *SERVO_SIG     :2          9:  (SCK):  HALFDOWN
+ *       N2     :Α6        12:  (SCL): HALFUP
+ *       UP     :0         11:  (SDA):  HALFDOWN
+ *     DOWN     :1         10:  (MISO)
+ *SERVO_SIG     :2          9:  (SCK)
  *RESERVED(CAN) :3          8:  (MOSI)
  * SPARKCUT     :4          7:   RESERVED(CAN)
  *        CHA   :5          6:   CHB
@@ -28,15 +28,15 @@
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN -15   //Fix   
-#define pot_clutch_MAX 610   //Fix
+#define pot_clutch_MIN 190   //Fix   
+#define pot_clutch_MAX 844   //Fix
 #define pot_error 15
 
 //delays
 #define clutch_t    100    //wait the servo!
 #define spark_delay  10    //wait the ECU!
 #define FULL        150
-#define HALF        75
+#define HALF        150
 
 //pins
 #define sparkcut    4      //Gearcut pin at ECU
@@ -48,8 +48,8 @@
 
 #define UP          0
 #define DOWN        1
-#define HALFUP      10
-#define HALFDOWN    9
+#define HALFUP      12
+#define HALFDOWN    11
 
 
 //general variables
@@ -58,8 +58,13 @@ uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
 
 //CANBUS variables
-uint8_t launch=0, neutral_prev=0;
-int gear=0;
+volatile uint8_t launch=0, autoshift=0, neutral=0;
+volatile uint8_t launch_prev=0, neutral_prev=0;
+unsigned char len = 0;
+unsigned char buf[8];
+volatile uint8_t gear=0, tps=0, rr=0, rl=0, fr=0, fl=0;
+volatile uint16_t rpm=0;
+
 
 
 //autoshift variables
@@ -72,12 +77,13 @@ int tps_min=5, tps_max=90;                          // pososto petaloudas !!!   
 uint8_t launch_cancel=0;
 
 const int SPI_CS_PIN = 3;
-//MCP_CAN CAN(SPI_CS_PIN);
+MCP_CAN CAN(SPI_CS_PIN);
 Servo clutch;
 
 void setup() {
   Serial.begin(115200);
-//  CAN.begin(CAN_1000KBPS);                           // 1Mbps
+  CAN.begin(CAN_1000KBPS);                           // 1Mbps
+  
   pinMode(shift_down, INPUT_PULLUP);
   pinMode(shift_up, INPUT_PULLUP);
   pinMode(sparkcut, OUTPUT);
@@ -94,10 +100,22 @@ void setup() {
    digitalWrite(HALFUP, HIGH);
     digitalWrite(HALFDOWN, HIGH);
 
+ attachInterrupt(7, canReads, FALLING);               // CAN BUS interrupt
   
+  CAN.init_Mask(0, 0, 0x000);                          // there are 2 mask in mcp2515, you need to set both of them
+  CAN.init_Mask(1, 0, 0xfff);                          // !!logika thelei allagi to mask!!
+    
+  CAN.init_Filt(0, 0, 0x5fc);                          // rear right hall
+  CAN.init_Filt(1, 0, 0x5fd);                          // rear left hall
+  CAN.init_Filt(2, 0, 0x5fe);                          // front right hall
+  CAN.init_Filt(3, 0, 0x600);                          // ecu rpm &tps
+  CAN.init_Filt(4, 0, 0x604);                          // ecu gear
+  CAN.init_Filt(5, 0, 0x666);                          // launch button + neutral button + autoshift button
+    
 }
 
 void loop() {
+  //canPrint();
   current=millis();
   pot_pos = analogRead(A2);  //steering wheel clutch potentiometer
     Serial.print("Gear: ");
@@ -115,6 +133,7 @@ void loop() {
      if((shift_flag==1) && gear!=0 && (digitalRead(shift_up)==LOW)) { //up shift
            gear++;
            if(gear <= total_gears)  {    //check if we passed the total number of gears
+              Serial.println("up");
               digitalWrite(sparkcut, HIGH);
               delay(spark_delay);
               digitalWrite(UP, LOW);
@@ -153,6 +172,7 @@ void loop() {
     if((digitalRead(shift_up)==LOW) && shift_flag==1){      
         gear++;
         if(gear==1) {
+            Serial.println("up");
             clutch.writeMicroseconds(1200);
             delay(clutch_t);
               digitalWrite(HALFDOWN, LOW);
@@ -196,28 +216,14 @@ void loop() {
         previous=millis();
         previous +=interval;
     }
-   
-//   if(digitalRead(neutral)==LOW && neutral_prev==0) { 
-//      clutch.writeMicroseconds(1200);
-//      delay(clutch_t);
-//      for(int i=0; i<gear-2; i++) {                  //shift down all the way to second gear
-//          maxon_down();
-//          delay(100);                             //borei kai ligotero
-//      }
-//      maxon_down_half();                           //shift down half  to neutral
-//      clutch.writeMicroseconds(clutch_pos);
-//      gear=0;
-//      neutral_prev=1;
-//   }
+
   }  
   if(current>previous){   //Debouncing method
     if(digitalRead(shift_up)==HIGH  && digitalRead(shift_down)==HIGH){ //means we have released both shifting pads
        shift_flag=1;
     }
   }
-//  if(digitalRead(neutral)==HIGH) {
-//    neutral_prev=0;
-//  }
+
 }
 
 
@@ -228,6 +234,78 @@ int supermap(double pot_pos,double pot_clutch_min,double pot_clutch_max,double s
   return clutch_pos;
 }
 
+void canReads() {
+  //Serial.println("interrupm");
+  CAN.readMsgBuf(&len, buf);
+  if(CAN.getCanId()==1532) {       //rear right module
+    rr=uint8_t(buf[0]);
+  }
+  else if(CAN.getCanId()==0x5fd) {  //rear left module
+    rl=uint8_t(buf[0]);
+    
+  }
+  else if(CAN.getCanId()==0x5fe) {  //front right module
+    fr=uint8_t(buf[0]);
+  }
+  else if(CAN.getCanId()==0x600) {  //ECU
+    rpm=uint16_t(buf[0]<<8 + buf[1]);
+    tps=uint8_t(buf[2])/2;                          //prosoxi borei na einai lathos
+  }
+  else if(CAN.getCanId()==0x604) {  //ECU
+    //gear=uint8_t(buf[0]);
+  }
+
+  else if(CAN.getCanId()==0x666) { //steering wheel
+    if(buf[6]&0b00000001) {
+      launch=1;
+    }
+    else{
+      launch=0;
+      launch_prev=0;
+    }
+    if(buf[6]&0b00000010) {
+      autoshift=1;
+    }
+    else {
+      autoshift=0;
+    }
+    if(buf[6]&0b00000100){
+      neutral=1;
+    }
+    else {
+      neutral=0;                                                      //check
+      neutral_prev=0;
+    } 
+   }
+}
+
+
+void canPrint() {
+  Serial.print("launch: ");
+  Serial.print(launch);
+  Serial.print(" - launch_prev: ");
+  Serial.print(launch_prev);
+  Serial.print(" - autoshift: ");
+  Serial.print(autoshift);
+  Serial.print(" - neutral: ");
+  Serial.print(neutral);
+  Serial.print(" - neutral_prev: ");
+  Serial.print(neutral_prev);
+  Serial.print(" -gear: ");
+  Serial.print(gear);
+  Serial.print(" - TPS: ");
+  Serial.print(tps);
+  Serial.print(" - RPM: ");
+  Serial.print(rpm);
+  Serial.print(" - RearRightHall: ");
+  Serial.print(rr);
+  Serial.print(" - RearLeftHall: ");
+  Serial.print(rl);
+  Serial.print(" - FrontRightHall: ");
+  Serial.print(fr);
+  Serial.print(" - FrontLeftHall: ");
+  Serial.println(fl);
+}
 
 /*
 void maxon_up(){

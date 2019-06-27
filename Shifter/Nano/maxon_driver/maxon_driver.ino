@@ -22,8 +22,8 @@
 
 #define UP          4
 #define DOWN        7
-#define HALFUP      8
-#define HALFDOWN    9
+#define HALFUP      10
+#define HALFDOWN    8
 
 
 double kp = 35 , ki = 1.0 , kd = 0.01;             // modify for optimal performance        //FIX
@@ -60,7 +60,7 @@ void loop() {
  if (!digitalRead(DOWN)){Serial.println("DOWN");delay(1);maxon_down();}
  if (!digitalRead(HALFUP)){Serial.println("HALFUP");delay(1);maxon_up_half();}
  if (!digitalRead(HALFDOWN)){Serial.println("HALFDOWN");delay(1);maxon_down_half();}
- ptr();
+// ptr();
  encoderPos=0;
 
 }

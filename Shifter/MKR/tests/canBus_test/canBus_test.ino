@@ -33,7 +33,7 @@ MCP_CAN CAN(SPI_CS_PIN);
 
 void setup() {
   Serial.begin(115200);
-  CAN.begin(CAN_500KBPS);                           // 1Mbps
+  CAN.begin(CAN_1000KBPS);                           // 1Mbps
  attachInterrupt(7, canReads, FALLING);               // CAN BUS interrupt
   
   CAN.init_Mask(0, 0, 0x000);                          // there are 2 mask in mcp2515, you need to set both of them
@@ -78,7 +78,7 @@ void loop() {
 
 
 void canReads() {
-  //Serial.println("interrupm");
+//  Serial.println("interrupt");
   CAN.readMsgBuf(&len, buf);
   if(CAN.getCanId()==1532) {       //rear right module
     rr=uint8_t(buf[0]);
