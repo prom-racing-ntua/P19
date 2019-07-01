@@ -48,10 +48,10 @@ void setup() {
   delay(2000);
 }
 void loop() {
- if (!digitalRead(UP)){Serial.println("UP");delay(1);maxon_up();}
- if (!digitalRead(DOWN)){Serial.println("DOWN");delay(1);maxon_down();}
- if (!digitalRead(HALFUP)){Serial.println("HALFUP");delay(1);maxon_up_half();}
- if (!digitalRead(HALFDOWN)){Serial.println("HALFDOWN");delay(1);maxon_down_half();}
+ if (!digitalRead(UP)){maxon_up();}
+ if (!digitalRead(DOWN)){maxon_down();}
+ if (!digitalRead(HALFUP)){maxon_up_half();}
+ if (!digitalRead(HALFDOWN)){maxon_down_half();}
 // ptr();
  encoderPos=0;
 }

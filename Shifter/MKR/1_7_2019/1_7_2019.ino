@@ -28,7 +28,7 @@ unsigned char vibe_debounce = 150;
 #include <Servo.h> 
 
 //clutch variables
-#define pot_clutch_MIN 210   //Fix   
+#define pot_clutch_MIN 400   //Fix   
 #define pot_clutch_MAX 844   //Fix
 #define pot_error 15
 
@@ -54,6 +54,7 @@ unsigned char vibe_debounce = 150;
 
 //general variables
 unsigned long current, previous, interval=300;
+unsigned long previous_g=0, interval_g=200;
 uint16_t pot_pos, clutch_pos;
 uint8_t shift_flag=1;
 //CANBUS variables
@@ -61,7 +62,7 @@ volatile uint8_t launch=0, autoshift=0, neutral=0;
 volatile uint8_t launch_prev=0, neutral_prev=0;
 unsigned char len = 0;
 unsigned char buf[8];
-volatile uint8_t gear=0, tps=0, rr=0, rl=0, fr=0, fl=0;
+volatile uint8_t gear=0, gear_read=0, tps=0, rr=0, rl=0, fr=0, fl=0;
 volatile uint16_t rpm=0;
 
 
@@ -155,9 +156,8 @@ void loop() {
               digitalWrite(sparkcut, LOW);
               delay(spark_delay);
               digitalWrite(UP, LOW);
-              delay(20);
+              delay(FULL);
               digitalWrite(sparkcut, HIGH);
-              delay(20);
               digitalWrite(UP, HIGH);              
            }
            else {gear=5;}
@@ -217,7 +217,7 @@ void loop() {
     }
     if((digitalRead(shift_down)==LOW) && shift_flag==1  && vibes_down){        
         gear--;
-        if(gear>0) {
+        if(gear>0 && gear<=5) {
            clutch.writeMicroseconds(1200);
            delay(clutch_t);
               digitalWrite(DOWN, LOW);
@@ -276,7 +276,13 @@ void canReads() {
     tps=uint8_t(buf[2])/2;                          //prosoxi borei na einai lathos
   }
   else if(id==0x604) {  //ECU
-    gear=uint8_t(buf[0]);
+    gear_read=uint8_t(buf[0]);
+    if(gear_read!=gear) {
+      if(millis()-previous_g>interval_g) {
+        gear=gear_read;
+      }
+    }
+    else{previous_g=millis();}
   }
 /*
   else if(id==0x666) { //steering wheel
