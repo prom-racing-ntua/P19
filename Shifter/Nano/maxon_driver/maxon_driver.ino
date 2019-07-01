@@ -14,27 +14,21 @@
 //              RST   RST
 //              GND   RX0
 //              VIN   TX1
-
 #define CHA         2      // Quadrature encoder A pin
 #define CHB         3      // Quadrature encoder B pin
 #define M1          6      //maxon pwm output 1
 #define M2          5      //maxon pwm output 2
-
 #define UP          7
 #define DOWN        4
 #define HALFUP      8
 #define HALFDOWN    10
-
-
 double kp = 35 , ki = 1.0 , kd = 0.01;             // modify for optimal performance        //FIX
 double input = 0, output = 0, setpoint = 0;
 volatile long encoderPos = 0;
-
 unsigned long current, previous, interval=30;
-unsigned long current_m, previous_m, interval_m=100;
+unsigned long current_m, previous_m, interval_m=80;
 unsigned long current_mhd, previous_mhd, interval_mhd=400;
 PID myPID(&input, &output, &setpoint, kp, ki, kd, DIRECT);  // if motor will only run at full speed try 'REVERSE' instead of 'DIRECT'
-
 void setup() {
   pinMode(CHA, INPUT_PULLUP);     
   pinMode(CHB, INPUT_PULLUP); 
@@ -53,7 +47,6 @@ void setup() {
    //TCCR1B = TCCR1B & 0b11111000 | 1;                    // set 31KHz PWM to prevent motor noise   FIXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   delay(2000);
 }
-
 void loop() {
  if (!digitalRead(UP)){Serial.println("UP");delay(1);maxon_up();}
  if (!digitalRead(DOWN)){Serial.println("DOWN");delay(1);maxon_down();}
@@ -61,19 +54,15 @@ void loop() {
  if (!digitalRead(HALFDOWN)){Serial.println("HALFDOWN");delay(1);maxon_down_half();}
 // ptr();
  encoderPos=0;
-
 }
-
 void count1() {
  if (digitalRead(CHB)==HIGH)
     encoderPos--;
  else
     encoderPos++;
 }
-
-
 void maxon_down(){
-  setpoint=14;                                                                           //FIX
+  setpoint=13;                                                                           //FIX
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -100,9 +89,8 @@ void maxon_down(){
   analogWrite(M1, 0);
   analogWrite(M2, 0);
 }     
-
 void maxon_up(){
-  setpoint=-14;                                                                              //FIX
+  setpoint=-13;                                                                              //FIX
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -128,10 +116,9 @@ void maxon_up(){
   analogWrite(M1, 0);
   analogWrite(M2, 0);     
 }
-
 void maxon_down_half(){
   //kp=30;
-  setpoint=14;                                                                                             //FIX
+  setpoint=13;                                                                                             //FIX
   previous_m=millis();
   previous_m+=interval_m;
   while(1){
@@ -159,7 +146,7 @@ void maxon_down_half(){
  // kp=35;   
 }
 void maxon_up_half(){
-  setpoint=-11;                                                                                             //FIX
+  setpoint=-5;                                                                                             //FIX
   previous_mhd=millis();
   previous_mhd+=interval_mhd;
   while(1){
@@ -185,12 +172,9 @@ void maxon_up_half(){
   analogWrite(M1, 0);
   analogWrite(M2, 0);     
 }
-
-
 void pwmOut(int out) {                                // to H-Bridge board
  if (out > 0) {
      analogWrite(M2, 0);
-
    analogWrite(M1, out);                             // drive motor CW
  }
  else {
@@ -198,7 +182,6 @@ void pwmOut(int out) {                                // to H-Bridge board
    analogWrite(M2, abs(out));                        // drive motor CCW
  }
 }
-
 void ptr() {
    Serial.print(encoderPos);
  Serial.print(",");
